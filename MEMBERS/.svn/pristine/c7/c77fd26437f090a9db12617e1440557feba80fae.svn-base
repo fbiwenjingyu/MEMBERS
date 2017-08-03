@@ -1,0 +1,137 @@
+@import url("sui-append.css");
+.sui-form{margin:50px 0 50px 30px;font-size: 14px;line-height: 18px;/*width:500px;*/}
+.sui-form select,
+.sui-form textarea,
+.sui-form input[type="text"],
+.sui-form input[type="password"],
+.sui-form input[type="datetime"],
+.sui-form input[type="datetime-local"],
+.sui-form input[type="date"],
+.sui-form input[type="month"],
+.sui-form input[type="time"],
+.sui-form input[type="week"],
+.sui-form input[type="number"],
+.sui-form input[type="email"],
+.sui-form input[type="url"],
+.sui-form input[type="search"],
+.sui-form input[type="tel"],
+.sui-form input[type="color"]{display: inline-block;*display:inline;height:36px;padding:0 4px;font-size: 14px;line-height: 36px;color: #555555;width:270px;box-sizing:border-box;vertical-align: middle;background-color: #ffffff;border: 1px solid #cccccc;-webkit-transition: border linear .2s;transition: border linear .2s;}
+.sui-form select:focus,
+.sui-form textarea:focus,
+.sui-form input[type="text"]:focus,
+.sui-form input[type="password"]:focus,
+.sui-form input[type="datetime"]:focus,
+.sui-form input[type="datetime-local"]:focus,
+.sui-form input[type="date"]:focus,
+.sui-form input[type="month"]:focus,
+.sui-form input[type="time"]:focus,
+.sui-form input[type="week"]:focus,
+.sui-form input[type="number"]:focus,
+.sui-form input[type="email"]:focus,
+.sui-form input[type="url"]:focus,
+.sui-form input[type="search"]:focus,
+.sui-form input[type="tel"]:focus,
+.sui-form input[type="color"]:focus,
+.sui-form .uneditable-input:focus{border-color: #28a3ef;outline: 0;outline: thin dotted \9;}
+.sui-form textarea{height: auto;resize: none;}
+.sui-form input[type="radio"],
+.sui-form input[type="checkbox"]{width: 13px;height: 13px;vertical-align: middle;}
+.sui-form input[type="file"],
+.sui-form input[type="image"],
+.sui-form input[type="submit"],
+.sui-form input[type="reset"],
+.sui-form input[type="button"]{width: auto;}
+.sui-form input[type="file"]{height: 24px;*margin-top: 4px;line-height: 24px;}
+.sui-form select{border: 1px solid #cccccc;background-color: #ffffff;}
+.sui-form select[multiple],
+.sui-form select[size]{height: auto;}
+.sui-form select:focus,
+.sui-form input[type="file"]:focus,
+.sui-form input[type="radio"]:focus,
+.sui-form input[type="checkbox"]:focus{outline: thin dotted #333;outline: 5px auto -webkit-focus-ring-color;outline-offset: -2px;}
+.sui-form input,
+.sui-form textarea{margin-left: 0;}
+.sui-form input[disabled],
+.sui-form select[disabled],
+.sui-form textarea[disabled],
+.sui-form input[readonly],
+.sui-form select[readonly],
+.sui-form textarea[readonly]{cursor: not-allowed;background-color: #ffffff;}
+.sui-form input[type="radio"][disabled],
+.sui-form input[type="checkbox"][disabled],
+.sui-form input[type="radio"][readonly],
+.sui-form input[type="checkbox"][readonly]{background-color: transparent;}
+.sui-form input:focus:invalid,
+.sui-form textarea:focus:invalid,
+.sui-form select:focus:invalid{color: #b94a48;border-color: #ee5f5b;}
+.sui-form input:focus:invalid:focus,
+.sui-form textarea:focus:invalid:focus,
+.sui-form select:focus:invalid:focus{border-color: #e9322d;}
+.sui-form .input-error{border-color: #ea4a36;}
+.sui-form .input-error:focus{border-color: #d72c16;}
+.sui-form textarea.input-error,
+.sui-form input[type="text"].input-error,
+.sui-form input[type="password"].input-error,
+.sui-form input[type="datetime"].input-error,
+.sui-form input[type="datetime-local"].input-error,
+.sui-form input[type="date"].input-error,
+.sui-form input[type="month"].input-error,
+.sui-form input[type="time"].input-error,
+.sui-form input[type="week"].input-error,
+.sui-form input[type="number"].input-error,
+.sui-form input[type="email"].input-error,
+.sui-form input[type="url"].input-error,
+.sui-form input[type="search"].input-error,
+.sui-form input[type="tel"].input-error,
+.sui-form input[type="color"].input-error{border-color: #ea4a36;}
+.sui-form textarea.input-error:focus,
+.sui-form input[type="text"].input-error:focus,
+.sui-form input[type="password"].input-error:focus,
+.sui-form input[type="datetime"].input-error:focus,
+.sui-form input[type="datetime-local"].input-error:focus,
+.sui-form input[type="date"].input-error:focus,
+.sui-form input[type="month"].input-error:focus,
+.sui-form input[type="time"].input-error:focus,
+.sui-form input[type="week"].input-error:focus,
+.sui-form input[type="number"].input-error:focus,
+.sui-form input[type="email"].input-error:focus,
+.sui-form input[type="url"].input-error:focus,
+.sui-form input[type="search"].input-error:focus,
+.sui-form input[type="tel"].input-error:focus,
+.sui-form input[type="color"].input-error:focus{border-color: #d72c16;}
+.sui-form .help-inline{display: inline-block;*display: inline;*zoom: 1;vertical-align: middle;}
+.sui-form .control-group{margin-bottom: 9px;}
+.sui-form .control-label{display: block;line-height: 36px;}
+.sui-form .control-group{margin-bottom:35px;position: relative;padding-left: 90px;}
+.sui-form .control-label{width: 80px;text-align: right;position: absolute;left:0;top:0;vertical-align: middle;}
+.sui-form .controls{position: relative;display: block;*display:inline;width: 100%;text-align: left;box-sizing:border-box;padding-left: 3px;}
+/*.sui-form .controls:first-child{*padding-left: 96px;}*/
+.sui-form .input-control input:focus ~ .sui-icon{display: none;}
+.sui-msg{font-size: 12px;vertical-align: middle;display: inline-block;*display: inline;*zoom: 1;position: relative;color: #555555;}
+.sui-msg > .msg-con{padding:0 10px;font-size: 14px;}
+.sui-msg > .msg-con p{font-weight: normal;margin-bottom: 0;margin-top: 9px;}
+.sui-msg.msg-error{color: #ea4a36;}
+.sui-btn{display: inline-block;padding: 2px 14px;font-size:16px;width: 100px;height: 40px;background-color: #36D7CD;color:#fff;border:none;}
+.sui-btn[type="reset"]{background-color: #b2b2b2;margin-left: 10px;}
+.sui-btn:hover{opacity: .75;filter:alpha(opacity=75);}
+.sui-btn.disabled,
+.sui-btn[disabled],
+.sui-btn.disabled:hover,
+.sui-btn[disabled]:hover,
+.sui-btn.disabled:focus,
+.sui-btn[disabled]:focus,
+.sui-btn.disabled:active,
+.sui-btn[disabled]:active,
+.sui-btn.disabled.active,
+.sui-btn[disabled].active{color: #c6c6c6;background-color: #f3f3f3;border-color: #e6e6e6;}
+.sui-btn.disabled,
+.sui-btn[disabled]{cursor: default;background-image: none;-webkit-box-shadow: none;box-shadow: none;-webkit-user-select: none;user-select: none;}
+.sui-btn .sui-icon{line-height: 1;}
+.sui-btn .sui-icon:after{content: " ";}
+
+.ass_form{width: 100%;margin-bottom: 20px;height: auto;overflow: hidden;}
+.ass_form input[type="text"]{width: 98%;}
+.ass_form input[type="text"].input-date{ width:45.5%;*width:41%;background: url(../images/date.png) no-repeat 95% center;}
+.ass_form select{width: 98%;}
+.ass_form .controls span{width:6%;display: inline-block;text-align: center;}
+.sui-form button.sui-search{margin: 0 3px;height: 36px;line-height: 36px;background:#36D7CD url(../images/search.png) no-repeat 22px center;padding:0 0 0 25px;}

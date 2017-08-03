@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.message.mapper.MOpinionMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+    <select id="deleteOpinionByIds">
+      update  M_OPINION set IS_DELETED = 1 WHERE ID IN (${ids})
+    </select>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( responsePhone )">
+				AND RESPONSE_PHONE = #{responsePhone}
+			</if>  
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( comtentLike )">
+				AND COMTENT like '%${comtentLike}%'
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( time )">
+				AND TIME = #{time}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isReply )">
+				AND IS_REPLY = #{isReply}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isDeleted )">
+				AND IS_DELETED = #{isDeleted}
+			</if>
+		</where>
+	 </sql>
+</mapper>

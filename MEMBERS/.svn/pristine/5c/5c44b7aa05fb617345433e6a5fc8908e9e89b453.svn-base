@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:soap="http://cxf.apache.org/bindings/soap" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+	http://cxf.apache.org/bindings/soap http://cxf.apache.org/schema/bindings/soap.xsd
+	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+	
+        
+    <bean id="sendPointJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject" ref="sendPointTask"/> 
+		<!-- 调用类中的方法 -->
+		<property name="targetMethod" value="execSendPoint"/>
+		<property name="concurrent" value="false"/>
+	</bean>
+	
+	<bean id="sendPointCron" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="sendPointJobDetail" /> 
+		<property name="startDelay" value="1000"/> 
+		<!-- 全量 每天2店更新 -->
+		<!-- <property name="cronExpression" value="0 0 2,6 * * ?"/> --> 		
+		<property name="cronExpression" value="*/5 * * * * ?"/>
+	</bean>
+	
+	<bean id="execUpdateLevelJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject" ref="sendPointTask"/> 
+		<!-- 调用类中的方法 -->
+		<property name="targetMethod" value="execUpdateLevel"/>
+		<property name="concurrent" value="false"/>
+	</bean>
+	
+	<bean id="execUpdateLevelCron" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="execUpdateLevelJob" /> 
+		<property name="startDelay" value="1000"/> 
+		<!-- 全量 每天2店更新 -->
+		<!-- <property name="cronExpression" value="0 0 2,6 * * ?"/> --> 		
+		<property name="cronExpression" value="0 15 2 ? * *"/>
+	</bean>
+	
+	
+	
+	<!-- 总管理类 如果将lazy-init='false' 那么容器启动就会执行调度程序 -->
+	<bean id="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>	
+ 				<ref bean="sendPointCron"/>
+ 				<ref bean="execUpdateLevelCron"/>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

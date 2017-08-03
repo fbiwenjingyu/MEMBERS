@@ -1,0 +1,41 @@
+@import url("font/iconfont.css");
+
+body{ margin:0px; padding:0px; font-size:12px;font-family: "Microsoft YaHei" ! important; text-align:center;background:#F1F5F5; overflow-x: hidden; color: #333;}
+*,html,div,input,img,span,h1,h2,h3,h4,h5,h6,p,dl,dt,dd,ul,li,a,form,textarea{ margin:0px; padding:0px; font-weight:normal; font-size:inherit;}
+html{-webkit-text-size-adjust:100%;}/*在css中关掉字体缩放*/
+a,a img{ border:none;}
+a,a:Hover,a:visited{text-decoration:none;}
+ul,li{ list-style:none;}
+i{ font-style:normal;}
+*{-webkit-tap-highlight-color:rgba(255,0,0,0);font-family: "Microsoft YaHei" ! important;}/* 1.去除android 标签被点击时产生的边框 2.去除ios a标签被点击时产生的半透明灰色背景 */
+input:focus, textarea:focus,a:focus{outline: none;}
+input{-webkit-appearance:none;font-family: "Microsoft YaHei" ! important; }
+textarea{ resize:none;font-family: "Microsoft YaHei" ! important; }
+*:focus{outline: none;}
+img{border: none;}
+.ellipsis{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+a{transition:all .3s ease;-webkit-transition:all .3s ease;}
+a:hover{color: #fff;}
+button{cursor: pointer;}
+
+body{background: url(../images/log_bg.jpg) no-repeat center top; background-size: cover;}
+.white{background-color: #fff;border-radius: 5px;overflow: hidden;height: auto;padding:0 15px;}
+.login_box{ width: 350px; height: 360px;position: absolute;left:50%;top:50%;margin: -220px 0 0 -175px;}
+.log_img{display: block;background: url(../images/log_logo.png) no-repeat center center;width: 100%;height:82px;}
+.log_title{margin: 20px 0 30px;text-align: center;font-size:28px; color: #fff;}
+.log_form .white p{position: relative; height:51px;padding-left:35px;}
+.log_form .white p input{width:285px;padding:0;font-size: 16px;color: #333;line-height: 30px;border:none;background: none;height: 32px;margin: 10px 0 0;position: relative;z-index: 2;}
+.log_form i{font-family:"iconfont" !important;font-size:22px;font-style:normal;-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;color: #AEAFB0;position: absolute;left:0;top:0;line-height: 52px;transition:all .3s ease;-webkit-transition:all .3s ease;}
+.log_form i.on{color:#01CCC0; }
+.log_form .log_btn{display: block;width: 100%;height:48px;line-height: 48px;border:none;border-radius: 5px;color: #fff;background-color: #01CCC0;margin-top: 15px;font-size: 18px;transition:all .3s ease;-webkit-transition:all .3s ease;}
+.log_form .log_btn:hover{opacity: .75;filter:alpha(opacity=75);}
+.error{font-size: 15px;color:#ff0;margin-top: 15px;}
+.log_form .white p.ma{padding-left: 0;}
+.log_form .white p.ma input{padding-left:0;width:100%;}
+.log_form .white p.bboth{border-top:1px solid #eee;border-bottom: 1px solid #eee;}
+.log_form .white p.ma{position: relative;padding-right: 120px;}
+.log_form .white p.ma span{position: absolute;right:0;top:4px; overflow: hidden;display: block;width:121px;height: 43px;}
+.log_form .white p.ma span img{width:121px;height: 43px;}
+.log_form p em{ position: absolute;left:35px; top:16px; color:#999;display:none;font-size: 16px; z-index: 1;font-style: normal;}
+.log_form p.ma em{left:0;}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MPointTaskDetailMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( taskId )">
+				AND TASK_ID = #{taskId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND COLLECT_DATE = #{collectDate}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( pointAmount )">
+				AND POINT_AMOUNT = #{pointAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( execStatus )">
+				AND EXEC_STATUS = #{execStatus}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( execTime )">
+				AND EXEC_TIME = #{execTime}
+			</if>
+		</where>
+	 </sql>
+</mapper>

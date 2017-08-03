@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MPointTaskMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<update id="genPointTaskDetail">
+	{call GenPointTaskDetail(#{collectDate,mode=IN,jdbcType=DATE})}
+	</update>	
+	
+	<update id="genHlgConsumptionData">
+	{call genHlgConsumptionData(#{collectDate,mode=IN,jdbcType=DATE})}
+	</update>
+	
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( taskId )">
+				AND TASK_ID = #{taskId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( currExecDate )">
+				AND CURR_EXEC_DATE = #{currExecDate}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( lastExecDate )">
+				AND LAST_EXEC_DATE = #{lastExecDate}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( pointAmount )">
+				AND POINT_AMOUNT = #{pointAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( execStatus )">
+				AND EXEC_STATUS = #{execStatus}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( totalDays )">
+				AND TOTAL_DAYS = #{totalDays}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( execDays )">
+				AND EXEC_DAYS = #{execDays}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+		</where>
+	 </sql>
+</mapper>

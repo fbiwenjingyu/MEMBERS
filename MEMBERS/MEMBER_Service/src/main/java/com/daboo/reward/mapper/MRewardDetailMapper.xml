@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MRewardDetailMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<!-- 分页查询会员奖励 fengchao -->
+	<select id="findByConditions" parameterType="java.util.Map" resultMap="result_ResultMap_MRewardDetailModel">
+		 SELECT m.USER_ID userId, m.FROM_USER_ID fromUserId,m.REWARD_TYPE rewardType, m.REWARD_AMOUNT rewardAmount, m.COLLECT_DATE collectDate,u.ACCOUNT_NO accountNo FROM M_REWARD_DETAIL m
+		 inner join M_USER_INFO u on u.ID = m.FROM_USER_ID 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rewardType )"> 
+			  <if test="rewardType != '0'.toString() ">
+				AND m.REWARD_TYPE = #{rewardType}
+			  </if>
+			 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rewardTypes )"> 
+			AND m.REWARD_TYPE IN(${rewardTypes}) 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND m.USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( date )">
+				AND m.COLLECT_DATE = #{date}
+			</if>
+		</where>
+	</select>
+	
+	<select id="countByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		 SELECT count(1) FROM M_REWARD_DETAIL m 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rewardType )"> 
+			  <if test="rewardType != '0'.toString() ">
+				AND m.REWARD_TYPE = #{rewardType}
+			  </if>
+			 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rewardTypes )"> 
+			AND m.REWARD_TYPE IN(${rewardTypes}) 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND m.USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( date )">
+				AND m.COLLECT_DATE = #{date}
+			</if>
+		</where>
+	</select>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND COLLECT_DATE = #{collectDate,jdbcType=DATE}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( fromUserId )">
+				AND FROM_USER_ID = #{fromUserId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rewardType )">
+				AND REWARD_TYPE = #{rewardType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rewardAmount )">
+				AND REWARD_AMOUNT = #{rewardAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+		</where>
+	 </sql>
+</mapper>

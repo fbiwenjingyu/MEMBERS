@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.finance.mapper.MDrawCashLogMapper">
+
+   <resultMap id="cashLogResult" type="com.daboo.finance.model.MDrawCashLogModel">
+    	<id column="ID" property="id"/>
+    	<result column="USER_ID" property="userId"/>
+    	<result column="CASH_ID" property="cashId"/>
+    	<result column="ORDER_ID" property="orderId"/>
+    	<result column="AMOUNT" property="amount"/>
+    	<result column="STATUS" property="status"/>
+	</resultMap>
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<!-- 添加方法，有返回值  -->
+    <insert id="insertModelReturnId" parameterType="com.daboo.finance.model.MDrawCashLogModel" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO M_DRAW_CASH_LOG(
+				USER_ID,
+				CASH_ID,
+				ORDER_ID,
+				AMOUNT,
+				STATUS,
+				CREATE_TIME,
+				UPDATE_TIME,
+				IS_DELETED
+			) VALUES ( 
+				#{userId},
+				#{cashId},
+				#{orderId},
+				#{amount},
+				#{status},
+				#{createTime},
+				#{updateTime},
+				#{isDeleted}
+			)
+	</insert>
+	<!-- 通过提现状态来查询提现记录  -->
+	<select id="selectCashList" parameterType="Integer" resultMap="cashLogResult">
+	   select c.ID,c.USER_ID,c.CASH_ID,c.ORDER_ID,c.AMOUNT,c.STATUS from M_DRAW_CASH_LOG c where c.IS_DELETED = 0 and STATUS = #{status}
+	</select>
+	<!-- 根据请求id修改  -->
+	<update id="updateModelByOrderId" parameterType="com.daboo.finance.model.MDrawCashLogModel">
+		UPDATE 
+			M_DRAW_CASH_LOG
+		<set>
+			<if test="status != null">
+				STATUS = #{status},
+			</if>
+			<if test="updateTime != null">
+				UPDATE_TIME = #{updateTime}
+			</if>
+		</set>
+		WHERE 
+			ID = #{id}
+	</update>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cashId )">
+				AND CASH_ID = #{cashId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( status )">
+				AND STATUS = #{status}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( creaetTime )">
+				AND CREAET_TIME = #{creaetTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isDeleted )">
+				AND IS_DELETED = #{isDeleted}
+			</if>
+		</where>
+	 </sql>
+</mapper>

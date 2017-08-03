@@ -1,0 +1,126 @@
+package com.daboo.finance.service;
+
+import java.util.List;
+
+import org.apache.ibatis.session.RowBounds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.daboo.core.exception.BusinessException;
+import com.daboo.core.util.MD5Encoder;
+import com.daboo.entity.page.GridDataModel;
+import com.daboo.entity.page.PageObject;
+import com.daboo.finance.mapper.MTransferDetailMapper;
+import com.daboo.finance.model.MTransferDetailModel;
+import com.daboo.reward.mapper.MStarNodeMapper;
+import com.daboo.reward.mapper.MUserAccountMapper;
+import com.daboo.reward.model.MStarNodeModel;
+import com.daboo.reward.model.MUserAccountModel;
+import com.daboo.reward.service.MemberRewardService;
+import com.daboo.user.mapper.MUserInfoMapper;
+import com.daboo.user.model.MUserInfoModel;
+
+@Service
+@Transactional
+public class MTransferDetailServiceImpl implements MTransferDetailService {
+	
+	private Logger log=LoggerFactory.getLogger(MTransferDetailServiceImpl.class);
+	@Autowired
+	MTransferDetailMapper mTransferDetailMapper;
+	@Autowired
+	MemberRewardService memberRewardService;
+	@Autowired
+	MUserAccountMapper mUserAccountMapper;
+	@Autowired
+	MStarNodeMapper mStarNodeMapper;
+	@Autowired
+	MUserInfoMapper mUserInfoMapper;
+	/**
+	  * @Description: 分页获取转账记录
+	  * @param page
+	  * @return
+	  * @author 朱冲
+	  * @date 2015-10-22
+	 */
+	public GridDataModel findTransferList(PageObject po) {
+		RowBounds rowBounds = new RowBounds(po.getOffset(), po.getPageSize());
+		List<MTransferDetailModel> rows = mTransferDetailMapper.findTransferListByConditions(
+				po.getCondition(), rowBounds);
+		int total = mTransferDetailMapper.findTransferListCountByConditions(po.getCondition());
+		return new GridDataModel(rows, total);
+	}
+	/**
+	  * @Description: 新增转账
+	  * @param page
+	  * @return
+	  * @author 朱冲
+	 * @throws BusinessException 
+	  * @date 2015-10-22
+	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW,rollbackFor=BusinessException.class)
+	public void addTransfer(MTransferDetailModel model) throws BusinessException {
+		try {
+			String ckpwd=checkPayPwd(model.getTransferId(), model.getPassword());
+			if(!"ok".equals(ckpwd)){//支付密码校验
+				throw new BusinessException(ckpwd);
+			}
+			//账户变更
+			memberRewardService.transfersBetweenUsers(model.getTransferId(), model.getReceiveId(), model.getTransferAmount(), model.getSerialNo(), model.getType(), model.getTransferName());
+			//插入转账记录
+			mTransferDetailMapper.insertModel(model);
+		} catch (BusinessException e) {
+			throw e;
+		}
+	}
+	@Override
+	public boolean checkAccount(Integer userId,Long transferAmount, Integer type) throws BusinessException {
+		try{
+			MUserAccountModel model=new MUserAccountModel();
+			model.setUserId(userId);
+			model.setAccountType(type);
+			model=mUserAccountMapper.getObjectByModel(model);
+			if (type==1) {
+				transferAmount=transferAmount*100;
+			}
+			if (model!=null&&model.getAccountAmount()>=transferAmount) {
+				return true;
+			}else {
+				return false;
+			}
+		}catch(Exception e){
+			log.error("校验账户余额异常", e);
+			throw new BusinessException("校验账户余额异常");
+		}
+	}
+	@Override
+	public MStarNodeModel getMStarNode(Integer userId) {
+		MStarNodeModel model = new MStarNodeModel();
+		model.setUserId(userId);
+		return mStarNodeMapper.getObjectByModel(model);
+	}
+	/**
+	 * 
+	  * @Description: 支付密码校验
+	  * @param userId
+	  * @param pwd
+	  * @return
+	  * @author 马正正
+	  * @date 2015年10月28日
+	 */
+	public String checkPayPwd(int userId,String pwd){
+		MUserInfoModel user=mUserInfoMapper.getObjectById(userId);
+		if(user==null){
+			return "用户不存在";
+		}else if(user.getPayPassword()==null){
+			return "密码为空";
+		}else if(!user.getPayPassword().equals(MD5Encoder.encode(pwd))){
+			return "密码错误";
+		}else{
+			return "ok";
+		}
+	}
+}

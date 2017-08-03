@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.finance.mapper.MRechargeMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<select id="findByCons" parameterType="java.util.Map" resultType="java.util.Map">
+		select a.SERIAL_NO,a.ID,a.MEMBER_NO,a.AMOUNT,a.ACCOUNT_TYPE,a.OUT_ACCOUNT,a.WAY,
+			a.FORWARD,a.STATUS,a.MEMO,a.CREATE_TIME,a.OPERATOR
+		from M_RECHARGE a
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( way )">
+				AND a.WAY = #{way}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( forward )">
+				AND a.FORWARD = #{forward}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+				AND a.ACCOUNT_TYPE = #{accountType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( memberNo )">
+				AND a.MEMBER_NO like '%${memberNo}%'
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			
+		</where>
+		order by a.CREATE_TIME desc
+	</select>
+	
+	<select id="findByConsCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1)
+		from M_RECHARGE a
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( memberNo )">
+				AND a.MEMBER_NO like '%${memberNo}%'
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( serialNo )">
+				AND SERIAL_NO = #{serialNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( memberNo )">
+				AND MEMBER_NO = #{memberNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( amount )">
+				AND AMOUNT = #{amount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+				AND ACCOUNT_TYPE = #{accountType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( outAccount )">
+				AND OUT_ACCOUNT = #{outAccount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( way )">
+				AND WAY = #{way}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( forward )">
+				AND FORWARD = #{forward}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( status )">
+				AND STATUS = #{status}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( memo )">
+				AND MEMO = #{memo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( operator )">
+				AND OPERATOR = #{operator}
+			</if>
+		</where>
+	 </sql>
+</mapper>

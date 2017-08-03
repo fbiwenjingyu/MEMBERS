@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd  
+	 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+	 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+
+	<task:scheduler id="dabooMember" pool-size="10" />
+
+	<task:scheduled-tasks>
+		<!--赠送博豆,积分  0 0 2,6 * * ?-->
+		<!-- <task:scheduled ref="sendPointTask" method="execSendPoint"	cron=" 0 0 2,6 * * ?" />
+		<task:scheduled ref="sendPointTask" method="execSendPoint" cron="*/5 * * * * ?" />
+		调整用户级别   2-8 点 15分钟执行一次  0 0/15 2-20 * * ?
+		<task:scheduled ref="sendPointTask" method="execUpdateLevel" cron="0 0/15 2-10 * * ?" />
+		管理奖励  0 0/15 3-10 * * ?
+		<task:scheduled ref="awardTask" method="execManageAwards" cron="0 0/15 3-10 * * ?" />
+		辅导奖励  0 0/15 4-12 * * ?
+		<task:scheduled ref="coachTask" method="execCoachAwards"	cron="0 0/15 4-12 * * ?" /> -->
+		
+		
+		 <task:scheduled ref="mainTask" method="mainTaskGen"	cron=" 0 0 1 * * ?" />
+		 <!-- 执行定时任务 -->
+		 <task:scheduled ref="mDrawCashTask" method="executeDrawCash"	cron=" 0 0/20 * * * ?" />
+		 <!-- 验证提现是否成功  -->
+		 <task:scheduled ref="mVerifyDrawCashSuccessTask" method="selectDrawCashSuccess"	cron=" 0 0/60 * * * ?" />
+		  <!-- 健康检查 -->
+		 <task:scheduled ref="healthyChcekTask" method="execute"	cron=" 0 0/10 * * * ?" />
+	</task:scheduled-tasks>
+</beans>

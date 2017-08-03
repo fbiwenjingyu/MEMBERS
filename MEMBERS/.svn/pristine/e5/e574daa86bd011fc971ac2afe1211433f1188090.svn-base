@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.user.mapper.MUserInfoMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<!--分页查询 用户信息-->
+	<select id="findUserInfoPaging" parameterType="java.util.Map" resultMap="result_ResultMap_MUserInfoModel">
+		SELECT a.ID, a.ACCOUNT_NO, a.PHONE , a.REAL_NAME, a.TYPE, a.LEVEL, a.AGENT_ID, a.RECOMMEND_ID, a.REGISTER_MONEY, a.PROVINCE, a.CITY, a.AREA, a.FULL_ADDRESS,  a.IS_OPEND,
+			a.BANK_NAME, a.SUBBRANCH_BANK, a.CARD_NAME, a.CARD_NO,a.COPPER_CARD_NUM,a.SILVER_CARD_NUM, a.CREATE_TIME,a.ACTIVATE_TIME,a.UPDATE_TIME, a.IS_DELETED,a.TOTAL_NUM, b.ACCOUNT_NO parentNo, c.ACCOUNT_NO recommendNo
+			, (SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 1 AND c1.USER_ID = a.ID) balance,
+		(SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 2 AND c1.USER_ID = a.ID) shoppingScore,
+		(SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 3 AND c1.USER_ID = a.ID) generalizeScore
+		<!-- <choose>
+			<when test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate ) and @org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				,(e.MY_MONEY - d.MY_MONEY) MY_MONEY , (e.TEAM_MONEY - d.TEAM_MONEY)  TEAM_MONEY 
+			</when>
+			<otherwise> -->
+				,a.MY_MONEY , a.TEAM_MONEY 
+		<!-- 	</otherwise>
+		</choose> -->
+		FROM M_USER_INFO a left JOIN  M_USER_INFO b ON a.AGENT_ID = b.ID  left JOIN M_USER_INFO c ON a.RECOMMEND_ID  = c.ID
+		<!-- <if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate ) and @org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+			LEFT JOIN M_DAY_POINT_DETAIL d  on d.COLLECT_DATE = #{startDate} AND a.ID = d.USER_ID LEFT JOIN M_DAY_POINT_DETAIL e ON d.USER_ID = e.USER_ID AND
+			  e.COLLECT_DATE = #{endDate}
+		</if> -->
+		WHERE a.type in (-1, 1,2,3) 
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND a.ACCOUNT_NO  like concat('%',#{accountNo},'%')
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.ACTIVATE_TIME &gt;= #{startDate}
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.ACTIVATE_TIME &lt;STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		</if>
+		ORDER BY ACTIVATE_TIME DESC
+	</select>
+	
+	<select id="findUserInfoCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM M_USER_INFO  WHERE type in (-1, 1,2,3)
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND ACCOUNT_NO  like concat('%',#{accountNo},'%')
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND ACTIVATE_TIME &gt;= #{startDate}
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND ACTIVATE_TIME &lt;= #{endDate}
+		</if>
+	</select>
+	
+	<!-- 修改区域为空 -->
+	<update id="updateAreaById" parameterType="integer">
+		UPDATE M_USER_INFO SET AREA = NULL WHERE ID = #{id}
+	</update>
+
+
+	<select id="queryMedalNum"  resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM M_USER_INFO  WHERE RECOMMEND_ID = #{recommendId} and LEVEL = #{level}
+	</select>
+	
+	<select id="checkRecommendCount"  resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM M_USER_INFO  WHERE ACCOUNT_NO = #{accountNo} and TYPE in (1,3)
+	</select>
+	
+	<!-- 获取正常状态的用户ID -->
+	<select id="findUserIdsByIdAndTypes" resultType="string">
+	SELECT GROUP_CONCAT(ID) FROM M_USER_INFO WHERE ID IN(${userIds}) AND TYPE IN(${types})
+	</select>
+
+    <!-- 根据主键查询用户 -->
+	<select id="findUserById" resultType="com.daboo.user.model.MUserInfoModel" parameterType="java.lang.Integer">
+	    SELECT a.ID, a.ACCOUNT_NO accountNo, a.PHONE phone , a.REAL_NAME realName FROM M_USER_INFO a where a.ID = #{id}
+	</select>
+	<!--分页查询 团队成员  后台-->
+	<select id="findTeamByConditions" parameterType="java.util.Map" resultType="com.daboo.user.model.MUserInfoModel">
+		select c.ACCOUNT_NO recommendNo,a.ACCOUNT_NO accountNo,a.ACTIVATE_TIME activateTime,a.LEVEL level,a.MY_MONEY myMoney,a.TEAM_MONEY teamMoney,a.ACTIVATE_BY activateBy
+		from
+		M_USER_INFO a LEFT JOIN M_USER_INFO c ON a.RECOMMEND_ID  = c.ID  
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendNo )">
+			    AND c.ACCOUNT_NO like concat('%',#{recommendNo},'%')
+			</if>
+			AND a.IS_DELETED = 0 
+		</where>
+		order by a.CREATE_TIME desc
+	</select>
+
+
+	<select id="findTeamCountByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from M_USER_INFO a LEFT JOIN M_USER_INFO c ON a.RECOMMEND_ID  = c.ID 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendNo )">
+				AND c.ACCOUNT_NO like concat('%',#{recommendNo},'%')
+			</if>
+			AND a.IS_DELETED = 0 
+		</where>
+	</select>
+	
+	<!--分页查询 待激活会员   后台-->
+	<select id="findUnOpenByConditions" parameterType="java.util.Map" resultType="com.daboo.user.model.MUserRegModel">
+		select a.ID id,c.ACCOUNT_NO recommendNo,a.ACCOUNT_NO accountNo,a.REG_NUM regNum,
+		a.REGISTER_MONEY registerMoney,a.CREATE_TIME createTime,a.LEVEL level,b.ACCOUNT_NO agentNo
+		from M_USER_REG a LEFT JOIN M_USER_INFO b
+		ON a.AGENT_ID = b.ID LEFT JOIN M_USER_INFO c ON a.RECOMMEND_ID  = c.ID
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendNo )">
+			    AND a.ACCOUNT_NO like concat('%',#{recommendNo},'%')
+			</if>
+			<if test="startDate != null">
+				AND a.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="endDate != null">
+				AND a.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+		order by a.CREATE_TIME desc
+	</select>
+
+	<select id="findUnOpenCountByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from M_USER_REG a
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendNo )">
+				AND a.ACCOUNT_NO like concat('%',#{recommendNo},'%')
+			</if>
+			<if test="startDate != null">
+				AND a.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="endDate != null">
+				AND a.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+
+	
+	<!--分页查询 待激活会员   前台-->
+	<select id="findUnOpenByConditionsForVip" parameterType="java.util.Map"
+		resultType="com.daboo.user.model.MUserRegModel">
+		select ID id,ACCOUNT_NO accountNo,REAL_NAME realName,REG_NUM regNum, REGISTER_MONEY registerMoney,CREATE_TIME createTime,LEVEL level from M_USER_REG 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+			    AND ACCOUNT_NO like concat('%',#{accountNo},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+			    AND REAL_NAME like concat('%',#{realName},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND LEVEL = #{level}
+			</if>
+			AND (RECOMMEND_ID = #{recommendId} OR AGENT_ID = #{recommendId})
+		</where>
+		order by CREATE_TIME desc
+	</select>
+
+	<select id="findUnOpenCountByConditionsForVip" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select count(1) from M_USER_REG 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+			    AND ACCOUNT_NO like concat('%',#{accountNo},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+			    AND REAL_NAME like concat('%',#{realName},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND LEVEL = #{level}
+			</if>
+			AND (RECOMMEND_ID = #{recommendId} OR AGENT_ID = #{recommendId})
+		</where>
+	</select>
+	
+	<!--分页查询 已激活会员   前台-->
+	<select id="findOpenByConditionsForVip" parameterType="java.util.Map"
+		resultType="com.daboo.user.model.MUserInfoModel">
+		select ID id,ACCOUNT_NO accountNo,REAL_NAME realName,REGISTER_MONEY registerMoney,CREATE_TIME createTime,ACTIVATE_TIME activateTime,LEVEL level,TYPE type,ACTIVATE_BY activateBy
+		from
+		M_USER_INFO 
+		<where>
+		    <if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId )">
+				AND RECOMMEND_ID = #{recommendId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+			    AND ACCOUNT_NO like concat('%',#{accountNo},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+			    AND REAL_NAME like concat('%',#{realName},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND ACTIVATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND ACTIVATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND LEVEL = #{level}
+			</if>
+			AND IS_DELETED = 0 AND TYPE != 0
+		</where>
+		order by CREATE_TIME desc
+	</select>
+
+	<select id="findOpenCountByConditionsForVip" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select count(1)
+		from
+		M_USER_INFO 
+		<where>
+		    <if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId )">
+				AND RECOMMEND_ID = #{recommendId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+			    AND ACCOUNT_NO like concat('%',#{accountNo},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+			    AND REAL_NAME like concat('%',#{realName},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND ACTIVATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND ACTIVATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND LEVEL = #{level}
+			</if>
+			AND IS_DELETED = 0 AND TYPE != 0
+		</where>
+		order by CREATE_TIME desc
+	</select>
+	
+	<!--分页获取团队信息 前台-->
+	<select id="findTeamMemberByConditionsForVip" parameterType="java.util.Map"
+		resultType="com.daboo.user.model.MUserInfoModel">
+		select a.ID id,a.ACCOUNT_NO accountNo,a.REAL_NAME realName,a.REGISTER_MONEY registerMoney,a.ACTIVATE_TIME activateTime,a.LEVEL level,c.ACCOUNT_NO recommendName,(select count(1) from M_USER_INFO where ACCOUNT_NO like concat('%',a.ACCOUNT_NO,'%')) myMoney,a.TEAM_MONEY teamMoney,a.TYPE type,a.ACTIVATE_BY activateBy
+		from
+		M_USER_INFO a LEFT JOIN M_USER_INFO c ON a.RECOMMEND_ID  = c.ID 
+		LEFT JOIN M_STAR_NODE d ON d.USER_ID = a.ID
+		<where>
+		    <if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId ) and type == 1">
+				AND a.RECOMMEND_ID = #{recommendId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId ) and type == 2">
+				AND d.PARENT_STR like concat('%',#{recommendId},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+			    AND a.ACCOUNT_NO like concat('%',#{accountNo},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+			    AND a.REAL_NAME like concat('%',#{realName},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.ACTIVATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.ACTIVATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND a.LEVEL = #{level}
+			</if>
+			AND a.IS_DELETED = 0 AND a.TYPE != 0
+		</where>
+		order by a.ACTIVATE_TIME desc
+	</select>
+
+	<select id="findTeamMemberCountByConditionsForVip" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select count(1)
+		from
+		M_USER_INFO a LEFT JOIN M_USER_INFO c ON a.RECOMMEND_ID  = c.ID 
+		LEFT JOIN M_STAR_NODE d ON d.USER_ID = a.ID
+		<where>
+		    <if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId ) and type == 1">
+				AND a.RECOMMEND_ID = #{recommendId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId ) and type == 2">
+				AND d.PARENT_STR like concat('%',#{recommendId},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+			    AND a.ACCOUNT_NO like concat('%',#{accountNo},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+			    AND a.REAL_NAME like concat('%',#{realName},'%')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.ACTIVATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.ACTIVATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND a.LEVEL = #{level}
+			</if>
+			AND a.IS_DELETED = 0 AND a.TYPE != 0
+		</where>
+	</select>
+	
+	<select id="findUserRelaByMemberNo" parameterType="java.lang.String" resultType="java.util.Map">
+		select ID `key`,ACCOUNT_NO,PHONE,REAL_NAME,TYPE,`LEVEL`,AGENT_ID,RECOMMEND_ID `parent`,
+			MY_MONEY,TEAM_MONEY,REGISTER_MONEY,ACTIVATE_TIME
+		from M_USER_INFO
+		where IS_DELETED=0
+			and ACCOUNT_NO=#{memberNo}
+	</select>
+	<select id="findUserRelaById" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select ID `key`,ACCOUNT_NO,PHONE,REAL_NAME,TYPE,`LEVEL`,AGENT_ID,RECOMMEND_ID `parent`,
+			MY_MONEY,TEAM_MONEY,REGISTER_MONEY,ACTIVATE_TIME
+		from M_USER_INFO
+		where IS_DELETED=0
+			and ID=#{memberId}
+	</select>
+	<select id="findUserRelaByPidPage" parameterType="java.util.Map" resultType="java.util.Map">
+		select ID `key`,ACCOUNT_NO,PHONE,REAL_NAME,TYPE,`LEVEL`,AGENT_ID,RECOMMEND_ID `parent`,
+			MY_MONEY,TEAM_MONEY,REGISTER_MONEY,ACTIVATE_TIME
+		from M_USER_INFO
+		where IS_DELETED=0
+		and RECOMMEND_ID=#{pid}
+		order by CREATE_TIME desc
+	</select>
+	<select id="findUserRelaByPidCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1)
+		from M_USER_INFO
+		where IS_DELETED=0
+		and RECOMMEND_ID=#{pid}
+	</select>
+	<select id="findUserRelaByPid" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select ID `key`,ACCOUNT_NO,PHONE,REAL_NAME,TYPE,`LEVEL`,AGENT_ID,RECOMMEND_ID `parent`,
+			MY_MONEY,TEAM_MONEY,REGISTER_MONEY,ACTIVATE_TIME
+		from M_USER_INFO
+		where IS_DELETED=0
+		and RECOMMEND_ID=#{pid}
+	</select>
+	
+	<!-- 获取详细用户信息 -->
+	<select id="getFullModel" parameterType="java.lang.Integer" resultMap="result_ResultMap_MUserInfoModel">
+		SELECT a.ID, a.ACCOUNT_NO, a.PHONE , a.REAL_NAME, a.TYPE, a.LEVEL, a.AGENT_ID, a.RECOMMEND_ID,a.MY_MONEY,a.TEAM_MONEY , a.REGISTER_MONEY, a.PROVINCE, a.CITY, a.AREA, a.FULL_ADDRESS,  
+			a.BANK_NAME, a.SUBBRANCH_BANK, a.CARD_NAME, a.CARD_NO,a.COPPER_CARD_NUM,a.SILVER_CARD_NUM, a.CREATE_TIME,a.ACTIVATE_TIME,a.UPDATE_TIME, 
+			a.IS_DELETED,a.TOTAL_NUM, b.ACCOUNT_NO parentNo, c.ACCOUNT_NO recommendNo, c.REAL_NAME recommendName
+			, (SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 1 AND c1.USER_ID = a.ID) balance,
+			(SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 2 AND c1.USER_ID = a.ID) shoppingScore,
+			(SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 3 AND c1.USER_ID = a.ID) generalizeScore
+			FROM M_USER_INFO a left JOIN  M_USER_INFO b ON a.AGENT_ID = b.ID  left JOIN M_USER_INFO c ON a.RECOMMEND_ID  = c.ID  
+			WHERE a.ID = #{id}
+	</select>
+	
+
+	<!-- dy 根据账户查询用户资产信息 -->
+	<select id="findUserAccountByAccountNo" parameterType="java.lang.String" resultMap="result_ResultMap_MUserInfoModel">
+		SELECT a.ID, a.ACCOUNT_NO, a.PHONE , a.REAL_NAME, a.TYPE, a.LEVEL, a.AGENT_ID, a.RECOMMEND_ID,a.MY_MONEY,a.TEAM_MONEY , a.CREATE_TIME,a.ACTIVATE_TIME,a.UPDATE_TIME, a.IS_DELETED,a.TOTAL_NUM
+			, (SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 1 AND c1.USER_ID = a.ID) balance,
+		(SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 2 AND c1.USER_ID = a.ID) shoppingScore,
+		(SELECT c1.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT c1 WHERE c1.ACCOUNT_TYPE = 3 AND c1.USER_ID = a.ID) generalizeScore
+		FROM M_USER_INFO a WHERE a.ACCOUNT_NO=#{accountNo} AND a.IS_DELETED=0;
+	</select>
+	<!-- dy 获取会员购买记录 -->
+	<select id="findBuyListByConditions" parameterType="java.util.Map" resultMap="result_ResultMap_MUserInfoModel">
+		SELECT A.ID,A.ACCOUNT_NO,A.PHONE,A.REAL_NAME,A.TYPE,A.`LEVEL` ,A.AGENT_ID,A.RECOMMEND_ID,A.REGISTER_MONEY,A.MASTER_USER_ID,A.CREATE_TIME
+		 FROM `M_USER_INFO` A WHERE A.RECOMMEND_ID=#{userId} AND A.MASTER_USER_ID IS NOT NULL 
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+			AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+			AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		</if>
+		ORDER BY A.CREATE_TIME DESC
+	</select>
+	
+	<select id="countBuyListByConditions"  parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		 FROM `M_USER_INFO` A WHERE A.RECOMMEND_ID=#{userId} AND A.MASTER_USER_ID IS NOT NULL 
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+			AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+			AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		</if>
+	</select>
+	
+	<!--查询需要奖励的用户ID  -->
+	<select id="findUserIdForAward"   resultType="int">
+		select ID FROM M_USER_INFO WHERE AWARD_FLAG = #{awardFlag,jdbcType=INTEGER} AND   DATE(ACTIVATE_TIME) =  #{collectDate,jdbcType=DATE}
+	</select>
+	
+	
+	<select id="getUserInfoForAward"    resultMap="result_ResultMap_MUserInfoModel">
+		SELECT ID, ACCOUNT_NO, PHONE, PASSWORD, PAY_PASSWORD, REAL_NAME, TYPE, LEVEL, REGISTER_MONEY, A.AGENT_ID, 
+		 RECOMMEND_ID, MY_MONEY,TEAM_MONEY ,PROVINCE, CITY, AREA, FULL_ADDRESS, BANK_NAME, SUBBRANCH_BANK, CARD_NAME, CARD_NO, A.CREATE_TIME, 
+		 ACTIVATE_TIME, UPDATE_TIME, IS_DELETED, COPPER_CARD_NUM, SILVER_CARD_NUM, AWARD_FLAG,TOTAL_NUM FROM M_USER_INFO A
+		 LEFT JOIN M_STAR_NODE B ON A.ID = B.USER_ID
+		 WHERE A.ID IN (${userIds})  AND A.TYPE IN (${types})
+		 ORDER BY B.FLOORS DESC
+	</select>
+	
+	
+	<update id="updateTeamMoney">
+		UPDATE M_USER_INFO SET TEAM_MONEY = TEAM_MONEY + #{teamMoney} 
+		WHERE ID in (${parentStr})
+	</update>
+	
+	<update id="updateMyMoney">
+		UPDATE M_USER_INFO SET MY_MONEY = MY_MONEY + #{myMoney},TEAM_MONEY = TEAM_MONEY + #{myMoney} 
+		WHERE ID = #{id}
+	</update>
+	
+	<update id="reduceMyMoney">
+		UPDATE M_USER_INFO SET MY_MONEY = MY_MONEY - #{myMoney},TEAM_MONEY = TEAM_MONEY - #{myMoney} 
+		WHERE ID = #{id}
+	</update>
+	
+	<update id="reduceTeamMoney">
+		UPDATE M_USER_INFO SET TEAM_MONEY = TEAM_MONEY - #{teamMoney} 
+		WHERE ID in (${parentStr})
+	</update>
+	
+	<update id="updateMasterUserInfoTotalNum">
+	UPDATE M_USER_INFO SET TOTAL_NUM = TOTAL_NUM + #{totalNum}
+		WHERE ID = #{id}
+	</update>
+	
+	<!--修改用户奖励标记  -->
+	<update id="updateAwardFlagByUserId">
+	update M_USER_INFO  SET AWARD_FLAG = #{awardFlag,jdbcType=INTEGER}
+	WHERE ID = #{id}
+	</update>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userIds )">
+				AND ID IN (${userIds}) 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND ACCOUNT_NO = #{accountNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( phone )">
+				AND PHONE = #{phone}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( password )">
+				AND PASSWORD = #{password}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( payPassword )">
+				AND PAY_PASSWORD = #{payPassword}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+				AND REAL_NAME = #{realName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( type )">
+				AND TYPE = #{type}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( types )">
+				AND TYPE IN (${types})
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND LEVEL = #{level}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( agentId )">
+				AND AGENT_ID = #{agentId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId )">
+				AND RECOMMEND_ID = #{recommendId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( province )">
+				AND PROVINCE = #{province}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( city )">
+				AND CITY = #{city}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( area )">
+				AND AREA = #{area}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( fullAddress )">
+				AND FULL_ADDRESS = #{fullAddress}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( bankName )">
+				AND BANK_NAME = #{bankName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( subbranchBank )">
+				AND SUBBRANCH_BANK = #{subbranchBank}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardName )">
+				AND CARD_NAME = #{cardName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardNo )">
+				AND CARD_NO = #{cardNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isDeleted )">
+				AND IS_DELETED = #{isDeleted}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( totalNum )">
+				AND TOTAL_NUM = #{totalNum,jdbcType=INTEGER} 
+			</if>
+		</where>
+	 </sql>
+</mapper>

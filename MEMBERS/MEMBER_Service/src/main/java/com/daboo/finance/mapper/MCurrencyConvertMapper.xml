@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.finance.mapper.MCurrencyConvertMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( serialNo )">
+				AND SERIAL_NO = #{serialNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND ACCOUNT_NO = #{accountNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( convertType )">
+				AND CONVERT_TYPE = #{convertType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( convertAmount )">
+				AND CONVERT_AMOUNT = #{convertAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( getAmount )">
+				AND GET_AMOUNT = #{getAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( fee )">
+				AND FEE = #{fee}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( state )">
+				AND STATE = #{state}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( remark )">
+				AND REMARK = #{remark}
+			</if>
+		</where>
+	 </sql>
+</mapper>

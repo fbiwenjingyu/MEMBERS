@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MUserAccountInoutMapper">
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<!-- 一次插入多个用户账户变动 -->
+	<insert id="insertUserAccountInout"  useGeneratedKeys="true" keyProperty="id"  parameterType="com.daboo.reward.model.MUserAccountInoutModel">
+		INSERT INTO M_USER_ACCOUNT_INOUT(USER_ID, ACCOUNT_TYPE, INOUT_TYPE, AMOUNT, TRADE_NO, INOUT_DESC, CREATE_TIME,OPERATOR_NO, USER_TYPE) VALUES
+	<foreach collection="userIds" item="item" index="index" separator="," >
+	(#{item},#{accountType,jdbcType=INTEGER}, #{inoutType,jdbcType=INTEGER}, #{amount,jdbcType=BIGINT}, #{tradeNo,jdbcType=VARCHAR}, #{inoutDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{operatorNo,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER})  
+	</foreach>
+	</insert>
+	<!-- 分页查询会员奖励 fengchao -->
+	<select id="findByConditions" parameterType="java.util.Map" resultMap="result_ResultMap_MUserAccountInoutModel">
+		 SELECT USER_ID, ACCOUNT_TYPE, INOUT_TYPE, AMOUNT, TRADE_NO, INOUT_DESC, CREATE_TIME,OPERATOR_NO, USER_TYPE FROM M_USER_ACCOUNT_INOUT m 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType )"> 
+			  <if test="inoutType != '0'.toString() ">
+				AND m.INOUT_TYPE = #{inoutType}
+			  </if>
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutTypes )"> 
+			AND m.INOUT_TYPE IN(${inoutTypes}) 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND m.USER_ID = #{userId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="countByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		 SELECT count(1) FROM M_USER_ACCOUNT_INOUT m 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType )"> 
+			  <if test="inoutType != '0'.toString() ">
+				AND m.INOUT_TYPE = #{inoutType}
+			  </if>
+			 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutTypes )"> 
+			AND m.INOUT_TYPE IN(${inoutTypes}) 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND m.USER_ID = #{userId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- <resultMap type="com.daboo.reward.model.MUserAccountInoutModel" id="my_result_ResultMap_MUserAccountInoutModel" extends="result_ResultMap_MUserAccountInoutModel">
+		<result column="FROM_USER_ID" property="fromUserId" jdbcType="INTEGER"/>
+		<result column="FROM_USER_NAME" property="fromUserName" jdbcType="VARCHAR"/>
+		<result column="FROM_USER_ACCOUNTNO" property="fromUserAccountNo" jdbcType="VARCHAR"/>
+	</resultMap> -->
+	
+	<select id="findListByConditions" parameterType="java.util.Map" resultMap="result_ResultMap_MUserAccountInoutModel">
+		SELECT 	A.ID,	A.USER_ID,	A.ACCOUNT_TYPE,	A.INOUT_TYPE,	A.AMOUNT,	A.TRADE_NO,	A.INOUT_DESC,	A.CREATE_TIME,A.USER_TYPE
+		FROM	M_USER_ACCOUNT_INOUT A 
+		WHERE	A.USER_ID = #{userId} 
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+			AND A.ACCOUNT_TYPE = #{accountType}
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType ) and @org.apache.ibatis.util.Ognl@isEmpty( inoutTypeForhlg )"><!-- inoutType 不为空的 时候 -->
+			AND A.INOUT_TYPE = #{inoutType}
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isEmpty( inoutType ) and @org.apache.ibatis.util.Ognl@isEmpty( inoutTypeForhlg )"><!-- inoutType 为空 的时候 -->
+			AND A.INOUT_TYPE IN (101,102,103,113,114,115,124,125,127,201,213,216,218,224,225,226,228,301,324)
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isEmpty( inoutType ) and @org.apache.ibatis.util.Ognl@isNotEmpty( inoutTypeForhlg ) "><!-- inoutTypeForhlg 不为空 的时候 -->
+			AND A.INOUT_TYPE IN (113,125,213,225)
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+			AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+			AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		</if>
+		ORDER BY A.ID DESC
+	</select>
+	
+	<select id="countListByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM M_USER_ACCOUNT_INOUT A
+		WHERE  A.USER_ID=#{userId}
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+			AND A.ACCOUNT_TYPE = #{accountType}
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType ) and @org.apache.ibatis.util.Ognl@isEmpty( inoutTypeForhlg )"><!-- inoutType 不为空的 时候 -->
+			AND A.INOUT_TYPE = #{inoutType}
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isEmpty( inoutType ) and @org.apache.ibatis.util.Ognl@isEmpty( inoutTypeForhlg )"><!-- inoutType 为空 的时候 -->
+			AND A.INOUT_TYPE IN (101,102,103,113,114,115,124,125,127,201,213,216,218,224,225,226,228,301,324)
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isEmpty( inoutType ) and @org.apache.ibatis.util.Ognl@isNotEmpty( inoutTypeForhlg ) "><!-- inoutTypeForhlg 不为空 的时候 -->
+			AND A.INOUT_TYPE IN (113,125,213,225)
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+			AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+		</if>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+			AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		</if>
+	</select>
+	
+	<!-- 查询会员账户记录 -->
+	<select id="selectAccountByConditions" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT A.ID, A.ACCOUNT_NO, A.REAL_NAME, A.CREATE_TIME,
+	    	(SELECT B.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT B WHERE B.ACCOUNT_TYPE = 1 AND B.USER_ID = A.ID) BALANCE,
+			(SELECT B.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT B WHERE B.ACCOUNT_TYPE = 2 AND B.USER_ID = A.ID) SHOPINGSCORE,
+			(SELECT B.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT B WHERE B.ACCOUNT_TYPE = 3 AND B.USER_ID = A.ID) GENERALIZESCORE,
+			(SELECT B.ACCOUNT_AMOUNT FROM M_USER_ACCOUNT B WHERE B.ACCOUNT_TYPE = 4 AND B.USER_ID = A.ID)  SHAREHOLDING
+		FROM M_USER_INFO A  
+		<where>
+			 A.IS_DELETED=0 and A.ID != -1
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND A.ACCOUNT_NO like '%${accountNo}%'
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+		ORDER BY A.CREATE_TIME DESC 
+	</select>
+	
+	<select id="countAccountByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		FROM M_USER_INFO A  
+		<where>
+			 A.IS_DELETED=0 and A.ID != -1
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND A.ACCOUNT_NO like '%${accountNo}%'
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询会员流水记录 -->
+	<select id="selectFlowByConditions" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 	A.ID,A.USER_ID ,A.ACCOUNT_TYPE,	A.INOUT_TYPE,A.AMOUNT,A.TRADE_NO,A.INOUT_DESC,A.CREATE_TIME,A.OPERATOR_NO,A.USER_TYPE
+		FROM	M_USER_ACCOUNT_INOUT A 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND A.USER_ID=#{userId} 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+				AND A.ACCOUNT_TYPE = #{accountType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType )">
+				AND A.INOUT_TYPE = #{inoutType}
+			</if>
+		</where>
+		ORDER BY A.CREATE_TIME DESC
+	</select>
+	
+	<select id="countFlowByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT 	COUNT(1)
+		FROM	M_USER_ACCOUNT_INOUT A
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND A.USER_ID=#{userId} 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+				AND A.ACCOUNT_TYPE = #{accountType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType )">
+				AND A.INOUT_TYPE = #{inoutType}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType )">
+				AND INOUT_TYPE = #{inoutType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( amount )">
+				AND AMOUNT = #{amount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( tradeNo )">
+				AND TRADE_NO = #{tradeNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutDesc )">
+				AND INOUT_DESC = #{inoutDesc}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( operatorNo )">
+				AND OPERATOR_NO = #{operatorNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userType )">
+				AND USER_TYPE = #{userType}
+			</if>
+		</where>
+	 </sql>
+</mapper>

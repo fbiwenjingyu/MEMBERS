@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<daboo-config>
+	<path>
+		<remoteServerUrl>http://localhost:8080/MEMBER_Service/remoting/</remoteServerUrl>
+	</path>
+	<webservice>
+		<httpClientPolicy>
+			<ConnectionTimeout>35000</ConnectionTimeout>
+			<ReceiveTimeout>35000</ReceiveTimeout>
+			<AllowChunking>false</AllowChunking>
+		</httpClientPolicy>
+	</webservice>
+	<passwrod>
+		<defaultPassword>66666666</defaultPassword>
+	</passwrod>
+	<version>1.0.14</version>
+</daboo-config>

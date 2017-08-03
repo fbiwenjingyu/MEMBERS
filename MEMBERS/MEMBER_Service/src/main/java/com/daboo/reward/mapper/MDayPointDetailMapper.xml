@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MDayPointDetailMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<insert id="updateDayPointDetailForSend"  useGeneratedKeys="true" keyProperty="id"  parameterType="com.daboo.reward.model.MDayPointDetailModel">
+		INSERT INTO M_DAY_POINT_DETAIL  
+		(COLLECT_DATE, USER_ID, POINT_AMOUNT, VERSION, REWARD_AMOUNT, STATUS, MANAGE_AMOUNT, COACH_AMOUNT, BEANS_NUM, TEAM_MONEY, MY_MONEY) VALUES
+		<foreach collection="userIds" item="item" index="index" separator="," >  
+		 (#{collectDate,jdbcType=DATE}, #{item}, #{pointAmount,jdbcType=NUMERIC},  #{version,jdbcType=INTEGER}, #{rewardAmount,jdbcType=NUMERIC},
+		 #{status,jdbcType=INTEGER}, #{manageAmount,jdbcType=NUMERIC}, #{coachAmount,jdbcType=NUMERIC}, #{beansNum,jdbcType=INTEGER}, #{teamMoney,jdbcType=INTEGER}, #{myMoney,jdbcType=INTEGER})
+		</foreach>
+		on duplicate key update POINT_AMOUNT = POINT_AMOUNT + values(POINT_AMOUNT),REWARD_AMOUNT = REWARD_AMOUNT +values(REWARD_AMOUNT),VERSION = VERSION+1
+		,MANAGE_AMOUNT = MANAGE_AMOUNT +values(MANAGE_AMOUNT),COACH_AMOUNT = COACH_AMOUNT +values(COACH_AMOUNT),BEANS_NUM = BEANS_NUM +values(BEANS_NUM)
+	</insert>
+	
+	<!--获取统计日期  collectDate,nums -->
+	<!-- <parameterMap type="com.daboo.reward.model.MDayPointDetailModel" id="para_getCollectDate">
+		<parameter property="collectDate" jdbcType="TIMESTAMP" mode="OUT"/>
+		<parameter property="nums" jdbcType="INTEGER" mode="OUT"/>
+	</parameterMap> -->
+	<update id="getCollectDate" parameterType="com.daboo.reward.model.MDayPointDetailModel" statementType="CALLABLE">
+	{call getCollectDate(#{collectDate,mode=OUT,jdbcType=DATE},#{nums,mode=OUT,jdbcType=INTEGER})}
+	</update>
+	
+	<update id="genDayPointDetailAndReport">
+	{call GenDayPointDetailAndReport(#{collectDate,mode=IN,jdbcType=DATE})}
+	</update>
+	
+	<resultMap id="result_findDayPointDetailForAward" extends="result_ResultMap_MDayPointDetailModel" type="com.daboo.reward.model.MDayPointDetailModel">
+		<result property="level" column="LEVEL"/>
+	</resultMap>
+	
+	<update id="updateDayPointDetailByState">
+	UPDATE M_DAY_POINT_DETAIL SET STATUS = #{newStatus} WHERE 
+	STATUS = #{oldStatus} AND COLLECT_DATE = #{collectDate,jdbcType=DATE}
+	</update>
+	
+	
+	
+	<select id="findDayPointDetailForAward" parameterType="com.daboo.reward.model.MDayPointDetailModel"  resultMap="result_findDayPointDetailForAward">
+		SELECT A.ID, COLLECT_DATE, A.USER_ID, POINT_AMOUNT, A.VERSION, REWARD_AMOUNT, STATUS,MANAGE_AMOUNT, COACH_AMOUNT, BEANS_NUM,B.COPPER_CARD_NUM, B.SILVER_CARD_NUM,
+		B.LEVEL FROM M_DAY_POINT_DETAIL 
+		A LEFT JOIN M_USER_INFO B ON A.USER_ID = B.ID  LEFT JOIN M_STAR_NODE C ON
+		A.USER_ID = C.USER_ID
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND B.LEVEL &lt; #{level}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( pointAmount )">
+				AND POINT_AMOUNT &gt; #{pointAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND COLLECT_DATE = #{collectDate,jdbcType=DATE}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( status )">
+				AND A.STATUS = #{status}
+			</if>
+			<if  test="@org.apache.ibatis.util.Ognl@isNotEmpty( userIds )">
+			AND A.USER_ID IN (<foreach collection="userIds" item="item" index="index" separator="," >#{item}</foreach>)
+			</if>	
+		</where>
+		<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( orderByClause )">
+			 ORDER BY ${orderByClause}
+		 </if>
+	</select>
+	<!-- 分页查询会员奖励 fengchao -->
+	<select id="findByConditions" parameterType="java.util.Map" resultMap="result_ResultMap_MDayPointDetailModel">
+		 SELECT A.COLLECT_DATE, A.USER_ID, A.POINT_AMOUNT, A.VERSION, A.REWARD_AMOUNT, A.STATUS, A.MANAGE_AMOUNT, A.COACH_AMOUNT,A.BEANS_NUM  beansNum,A.MY_MONEY,A.TEAM_MONEY ,
+		 B.ACCOUNT_NO accountNo,B.REAL_NAME userName
+		 FROM M_DAY_POINT_DETAIL A LEFT JOIN M_USER_INFO B ON A.USER_ID = B.ID
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND B.ACCOUNT_NO like '%${accountNo}%'
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND A.COLLECT_DATE = STR_TO_DATE(#{collectDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.COLLECT_DATE &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.COLLECT_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+	
+	<select id="findDayPointDetailByUserId"  parameterType="java.util.Map" resultMap="result_ResultMap_MDayPointDetailModel">
+		SELECT A.COLLECT_DATE, A.USER_ID, A.REWARD_AMOUNT,A.BEANS_NUM , A.POINT_AMOUNT, A.MANAGE_AMOUNT, A.COACH_AMOUNT,A.STATUS,A.MY_MONEY,A.TEAM_MONEY  
+		 FROM M_DAY_POINT_DETAIL A  WHERE  A.USER_ID = #{userId}
+		 	<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.COLLECT_DATE &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.COLLECT_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		ORDER BY A.COLLECT_DATE DESC
+	</select>
+	
+	<select id="countDayPointDetailByUserId"  parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT   COUNT(1)
+		 FROM M_DAY_POINT_DETAIL A  WHERE  A.USER_ID = #{userId}
+		 	<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.COLLECT_DATE &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.COLLECT_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+	</select>
+	
+	<resultMap type="com.daboo.reward.model.MDayPointDetailModel" id="result_getDayPointDetailForLevelSetting" extends="result_ResultMap_MDayPointDetailModel">
+		<result property="level" column="LEVEL"/>
+		<result property="copperCardNum" column="COPPER_CARD_NUM"/>
+		<result property="silverCardNum" column="SILVER_CARD_NUM"/>
+		<result property="recommendId" column="RECOMMEND_ID"/>
+	</resultMap>
+	
+	<select id="getDayPointDetailForLevelSetting"  resultMap="result_getDayPointDetailForLevelSetting">
+	select A.ID, COLLECT_DATE, A.USER_ID, REWARD_AMOUNT, BEANS_NUM, POINT_AMOUNT, MANAGE_AMOUNT, COACH_AMOUNT, STATUS, A.VERSION,
+	B.LEVEL,IFNULL(COPPER_CARD_NUM,0) COPPER_CARD_NUM,IFNULL(SILVER_CARD_NUM,0) SILVER_CARD_NUM	,B.RECOMMEND_ID
+	FROM M_DAY_POINT_DETAIL A LEFT JOIN M_USER_INFO B
+	ON A.USER_ID = B.ID
+	LEFT JOIN M_STAR_NODE C	ON A.USER_ID = C.USER_ID 
+ 	WHERE  A.POINT_AMOUNT &gt; #{pointAmount}  AND B.`LEVEL` &lt; #{level} AND  A.COLLECT_DATE = #{collectDate,jdbcType=DATE} AND A.STATUS = 1
+	ORDER BY IFNULL(C.FLOORS,0) DESC
+	</select>
+	
+	
+	<select id="countByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		 SELECT count(1) FROM M_DAY_POINT_DETAIL 
+		 A LEFT JOIN M_USER_INFO B ON A.USER_ID = B.ID
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND B.ACCOUNT_NO like '%${accountNo}%'
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND A.COLLECT_DATE = STR_TO_DATE(#{collectDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND A.COLLECT_DATE &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND A.COLLECT_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+	<!--查找满足 直推奖 和 管理奖 大于 0 的所有数据  -->
+	<select id="findDayPointDetailForCoachAwards" parameterType="com.daboo.reward.model.MDayPointDetailModel"  resultMap="result_findDayPointDetailForAward">
+		SELECT A.ID, COLLECT_DATE, A.USER_ID, POINT_AMOUNT, A.VERSION, REWARD_AMOUNT, STATUS,MANAGE_AMOUNT, COACH_AMOUNT, BEANS_NUM,B.COPPER_CARD_NUM, B.SILVER_CARD_NUM,
+		B.LEVEL FROM M_DAY_POINT_DETAIL
+		A LEFT JOIN M_USER_INFO B ON A.USER_ID = B.ID  WHERE MANAGE_AMOUNT &gt; 0  AND REWARD_AMOUNT  &gt; 0	 
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND COLLECT_DATE = #{collectDate,jdbcType=DATE}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( status )">
+				AND STATUS = #{status}
+			</if> 
+	</select>
+	
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND COLLECT_DATE = #{collectDate,jdbcType=DATE}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( pointAmount )">
+				AND POINT_AMOUNT = #{pointAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( copperCardNum )">
+				AND COPPER_CARD_NUM = #{copperCardNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( silverCardNum )">
+				AND SILVER_CARD_NUM = #{silverCardNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+		</where>
+	 </sql>
+</mapper>

@@ -1,0 +1,174 @@
+@import url("http://g.alicdn.com/sj/dpl/1.5.1/css/sui.css");
+@import url("common.css");
+@import url("font/iconfont.css");
+@import url("sui-append.css");
+a,a:hover,a:focus,a.active:hover{text-decoration: none;}
+*{outline: none;}
+li{list-style: none;}
+
+/*我的资产*/
+.my_asset{padding:40px 20px;height: auto;overflow: hidden;margin-right: -120px;}
+.my_asset span{display: inline-block;*display: inline;margin-right: 120px;font-size: 16px;color: #A6A6A6;}
+.my_asset span b{font-size: 28px;font-weight: bold;color:#FF5722;}
+
+/*最新公告*/
+.new_notice{display: block;padding: 10px 20px;list-style: none;}
+.new_notice a{font-size:15px;color: #333;position: relative;padding-right:200px;padding-left: 45px;display: block;height: 60px;line-height: 60px;}
+.new_notice a i{font-family:"iconfont" !important;font-size:14px;font-style:normal;-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;color: #36D7CD;position: absolute;left:20px;top:0;font-weight: bold;}
+.new_notice a span{color: #ccc;position: absolute;right:20px;top:0;}
+.new_notice a:hover{color: #02CDC1;}
+.notice_none{display: block;text-align: center;padding:60px 0;color: #999;font-size: 16px;}
+
+/*公告详情*/
+.notice_cont{padding:20px;font-size: 13px;line-height: 24px;color: #666;}
+.notice_cont img{display: block;}
+.notice_cont h4{font-size: 18px;margin-bottom: 10px;}
+.notice_cont h4 span{font-size: 14px;margin-left: 20px;color: #999;}
+.notice_feed_box{display: block;margin-top: 20px;border-top:5px solid #ddd;padding: 20px;}
+.notice_feed_box p{display: block;padding:0 0 0 20px;margin:15px 20px 15px 100px;border-left:1px solid #eee;position: relative;color: #666;}
+.notice_feed_box p b{display: block;position: absolute;left:-100px;top:0;font-size: 15px;color: #333; width:90px;}
+.notice_feed_box p i{display: block;color: #999;}
+.notice_feed_box p a{display: inline-block;padding:2px 0;text-align:center;color: #02CDC1;font-size: 14px;}
+.notice_feed_box .notice_feed_list{border-bottom: 1px solid #eee;display: block;clear: both;}
+.feed_form{display:none;height: auto;overflow: hidden;margin:20px 0 15px 20px;}
+.feed_form textarea{width:90%;float: left;border:1px solid #ddd;height:80px;line-height: 18px;font-size: 14px;padding:5px;}
+.feed_form button{display: inline-block;background-color:#02CDC1;color: #fff;width: 60px;height: 30px;line-height: 30px;text-align: center;border:none;margin-left: 10px; }
+
+/*信息中心*/
+.msg_box{display: block;padding: 10px 20px;}
+.msg_box a{font-size:15px;color: #333;position: relative;padding-right:200px;padding-left:325px;display: block;height: 60px;line-height: 60px;}
+.msg_box a i{font-family:"iconfont" !important;font-size:14px;font-style:normal;-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;color: #36D7CD;position: absolute;left:20px;top:0;font-weight: bold;}
+.msg_box a b{position: absolute;left:60px;top:0;font-weight:bold;width: 240px;}
+.msg_box a span{color: #ccc;position: absolute;right:20px;top:0;}
+.msg_box a span em{position: absolute;right:-15px;top:26px;background-color: #f00;width:8px;height: 8px;border-radius: 50%;}
+.msg_box a:hover{color: #02CDC1;}
+
+/*留言按钮*/
+.message{position: absolute;right:20px;top:0;width: 80px;background-color:#02CDC1;color: #fff;border-radius: 5px;}
+.message:hover{opacity: .75;filter:alpha(opacity=75);}
+
+/*sui-form自定义*/
+.sui-form{margin:50px 0 50px 30px;font-size: 14px;line-height: 18px;/*width:500px;*/}
+.sui-form button{margin-top: 20px;margin-right: 20px;}
+.sui-form button[type="reset"]{background-color:#F1F5F5;color: #999;}
+.sui-form .control-group label b{color: #f00;}
+.sui-form .sui-tip{position: absolute;right:-130px;top:0;color: #f00;line-height: 32px;}
+.sui-form .sui-inf{color: #666;}
+.sui-form #question{height: 150px;width: 500px;}
+
+.sui-form .control-group{margin-bottom: 9px;}
+.sui-form .control-label{display: block;line-height: 36px;}
+.sui-form .control-group{margin-bottom:35px;position: relative;padding-left: 90px;}
+.sui-form .control-label{width: 80px;text-align: right;position: absolute;left:0;top:0;vertical-align: middle;}
+.sui-form .controls{position: relative;display: block;*display:inline;width: 100%;text-align: left;box-sizing:border-box;padding-left: 3px;}
+
+.sui-form.form-horizontal .control-group{margin-bottom: 9px;}
+.sui-form.form-horizontal .control-label{display: block;line-height: 36px;}
+.sui-form.form-horizontal .control-group{margin-bottom:35px;position: relative;padding-left: 90px;display: block;}
+.sui-form.form-horizontal .control-label{width: 80px;text-align: right;position: absolute;left:0;top:0;vertical-align: middle;}
+.sui-form.form-horizontal .controls{position: relative;display: block;*display:inline;width: 100%;text-align: left;box-sizing:border-box;padding-left: 3px;}
+
+.sui-form select,
+.sui-form textarea,
+.sui-form input[type="text"],
+.sui-form input[type="password"],
+.sui-form input[type="datetime"],
+.sui-form input[type="datetime-local"],
+.sui-form input[type="date"],
+.sui-form input[type="month"],
+.sui-form input[type="time"],
+.sui-form input[type="week"],
+.sui-form input[type="number"],
+.sui-form input[type="email"],
+.sui-form input[type="url"],
+.sui-form input[type="search"],
+.sui-form input[type="tel"],
+.sui-form input[type="color"],
+.sui-form input[type="text"].input-medium{display: inline-block;*display:inline;height:36px;padding:0 4px;font-size: 14px;/*line-height: 36px;*/color: #555555;width:270px;box-sizing:border-box;vertical-align: middle;background-color: #ffffff;border: 1px solid #cccccc;-webkit-transition: border linear .2s;transition: border linear .2s;}
+.sui-btn{display: inline-block;padding: 2px 14px;font-size:16px;width: 100px;height: 40px;background-color: #36D7CD;color:#fff;border:none;}
+.sui-btn[type="reset"]{background-color: #b2b2b2;margin-left: 10px;}
+.sui-btn:hover{opacity: .75;filter:alpha(opacity=75);background-color: #36D7CD;border:none;color: #fff;}
+.sui-btn.disabled,
+.sui-btn[disabled],
+.sui-btn.disabled:hover,
+.sui-btn[disabled]:hover,
+.sui-btn.disabled:focus,
+.sui-btn[disabled]:focus,
+.sui-btn.disabled:active,
+.sui-btn[disabled]:active,
+.sui-btn.disabled.active,
+.sui-btn[disabled].active{color: #c6c6c6;background-color: #f3f3f3;border-color: #e6e6e6;}
+.sui-btn.disabled,
+.sui-btn[disabled]{cursor: default;background-image: none;-webkit-box-shadow: none;box-shadow: none;-webkit-user-select: none;user-select: none;}
+.sui-btn .sui-icon{line-height: 1;}
+.sui-btn .sui-icon:after{content: " ";}
+
+.sui-form.ass_form{width: 100%;margin-bottom: 20px;height: auto;overflow: hidden;}
+.sui-form.ass_form input[type="text"].input-medium{width: 98%;}
+.sui-form.ass_form input[type="text"].input-medium.input-date{ width:45.5%;*width:41%;background: url(../images/date.png) no-repeat 95% center;}
+.sui-form.ass_form select{width: 98%;}
+.sui-form.ass_form .controls span{width:6%;display: inline-block;text-align: center;}
+.sui-form button.sui-search{margin: 0 3px;height: 36px;line-height: 36px;background:#36D7CD url(../images/search.png) no-repeat 22px center;padding:0 0 0 25px;font-family: "Microsoft YaHei" ! important;}
+.sui-msg.msg-error > .msg-con{border:none;background: none;}
+.sui-msg > .msg-con{*padding-left:3px;}
+.sui-msg > .msg-icon{top: 2px;}
+.sui-msg.msg-large > .msg-con{padding:11px;}
+.sui-btn:hover, .sui-btn:focus{color: #fff;border:none;outline: none;}
+
+.color1{color: #ff5722;}
+.color2{color: #02CDC1;}
+.ass_fl{float: left; width: 44%;}
+
+#service .sui-form{font-size: 16px;margin-left: -40px;}
+
+/*成功、失败状态*/
+.state_box{ padding-top:50px;text-align: center;}
+.state_box img{ width:100px;}
+.state_box h2{ font-weight: normal; font-size: 18px; color: #333; padding-top: 20px; padding-bottom: 10px;}
+.state_box  p{ font-size: 16px; color: #999; padding-bottom: 35px;}
+.state_box  p a{ padding: 0 5px; color: #01ccc0;}
+.state_btn{ width:400px; padding: 0 10px;margin: 20px auto 0;}
+.state_btn a{ display: block;padding: 14px 0; border-radius: 3px; -moz-border-radius: 3px; background-color: #01ccc0; font-size: 16px; color: #fff; width: 100%; }
+.state_btn a:hover{background-color: #00bdb2;}
+.state_href{padding:20px 45px 40px;font-size: 16px;}
+.state_href a{margin-right: 40px;color: #333;}
+
+/* 云蝶兑换 */
+.yundie{display: block;background: #F1F5F5 url(../images/yundie.jpg) no-repeat left center;height: 260px;margin: 20px;padding: 80px 0 0 576px;color: #999;font-size: 16px;line-height: 30px;position: relative;left: 0;}
+.yundie h4{width: 375px;margin-bottom: 20px;font-size: 24px;color: #656565;}
+.yundie p{width: 375px;}
+.yundie i{color: #333;font-size: 20px;padding-top: 10px;display: inline-block;}
+#yundie_address .address select{width: 120px;margin-bottom: 20px;}   
+.btn-cancel{background-color: #b2b2b2!important;}
+.sui-form .star{color: #ff5722;font-size: 16px;}
+/* #duiModal{display: block;} */
+#duiModal.sui-modal{position: fixed;top: 50%;left: 50%;margin-left: -300px;margin-top:-150px;z-index: 1050;width: 600px;height: 300px;background-color: #fff;border:none;-webkit-box-shadow: 0 3px 7px rgba(0,0,0,0.3);-moz-box-shadow: 0 3px 7px rgba(0,0,0,0.3);box-shadow: 0 3px 7px rgba(0,0,0,0.3);-webkit-background-clip: padding-box;-moz-background-clip: padding-box;background-clip: padding-box;outline: none;border-radius: 5px;}
+#duiModal .window_cont{position: static;margin: 0;width: auto;height: auto;box-shadow: none;padding: 20px 30px;background: none;}
+#duiModal .window_box{border: none;}
+#duiModal .window_cont h4{background-color: transparent;font-size: 20px;color: #888888;border-bottom: 1px solid #f1f5f5;padding: 0;font-weight: normal;}
+#duiModal label{font-size: 16px;display: block;width: 100%;text-align: left;padding-bottom: 20px;}
+#duiModal .sui-form .control-group{padding-left: 0;}
+
+/* 左右导航 */
+.nav_ex{border-radius: 5px;cursor: pointer;background:#c6c6c6 url(../images/nav_img.png) no-repeat -26px -57px;height: 60px;width: 30px;position: absolute;top: 230px;right: 40px;padding: 4px;}
+.nav_ex:hover{background-color: #999;}
+
+/* 智家安防套装兑换 */
+.zhijia{display: block;background:#e3e3e3 url(../images/zj_img.jpg) no-repeat left center;height: 260px;margin: 20px;padding: 80px 192px 0 626px;color: #999;font-size: 16px;line-height:30px;position: absolute;top: 65px;left: 1333px;}
+.zhijia h4{width: 375px;margin-bottom:20px;font-size: 24px;color: #333;font-weight: bold;}
+.zhijia p{width: 375px;line-height: 22px;}
+.zhijia p i{text-decoration: line-through;font-size: 20px;display: inline-block;padding:15px 0 5px;}
+.zhijia p b{color: #333;font-size: 20px;}
+
+.buy_inf{display: block;font-size: 16px;padding:20px;color: #02CDC1;}
+/**提现手续费**/
+.fee{line-height: 35px;display:inline-block;color:#f00;}
+.con_spe{margin-top:-10px;}
+/* 去除点击确认按钮的背景无 DY */
+.sui-btn:focus{background-color: #36D7CD;}
+
+#yundie_address .sui-form .control-label{ width: 120px;}
+#yundie_address .sui-form .control-group{padding-left: 130px;}
+#yundie_address .sui-form{padding-left: 50px;}

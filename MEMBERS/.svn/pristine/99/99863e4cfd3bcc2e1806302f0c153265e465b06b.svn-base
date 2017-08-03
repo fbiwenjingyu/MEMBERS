@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.exchange.mapper.MExchangeInfoMapper">
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( goodType )">
+				AND GOOD_TYPE = #{goodType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( applyTime )">
+				AND APPLY_TIME = #{applyTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( exchangeNum )">
+				AND EXCHANGE_NUM = #{exchangeNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recepitPhone )">
+				AND RECEPIT_PHONE like   CONCAT(CONCAT('%',#{recepitPhone}),'%') 
+				
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recepitUserName )">
+				AND RECEPIT_USER_NAME = #{recepitUserName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( province )">
+				AND PROVINCE = #{province}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( city )">
+				AND CITY = #{city}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( area )">
+				AND AREA = #{area}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( fullAddress )">
+				AND FULL_ADDRESS = #{fullAddress}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( state )">
+				AND STATE = #{state}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( sendTime )">
+				AND SEND_TIME = #{sendTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( sendUser )">
+				AND SEND_USER = #{sendUser}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( expressCompany )">
+				AND EXPRESS_COMPANY = #{expressCompany}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( expressOrder )">
+				AND EXPRESS_ORDER = #{expressOrder}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+			    AND  <![CDATA[APPLY_TIME >= date_format(CONCAT(#{startDate},' 00:00:00'),'%Y-%c-%d %H:%i:%S')    ]]>
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND  <![CDATA[  APPLY_TIME <= date_format( CONCAT(#{endDate},' 23:59:59') , '%Y-%c-%d %H:%i:%S' )   ]]>
+			</if>
+		</where>
+	 </sql>
+	 
+
+	 	<!-- 扩展的字段，使用继承方式进行关联 -->
+     <resultMap type="com.daboo.exchange.model.MExchangeInfoModel" id="extendMap" extends="result_ResultMap_MExchangeInfoModel">
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+          <result column="ACCOUNT_NO" property="accountNo" jdbcType="VARCHAR" />
+      </resultMap>
+  	  <select id="queryTotal"  parameterType="java.util.Map"  resultType="java.lang.Integer">
+		 SELECT  count(1) FROM   M_EXCHANGE_INFO        
+         <include refid="Model_Where_Clause"/>           
+      </select>
+     
+  	  <select id="queryList"  parameterType="java.util.Map"  resultMap="extendMap">
+		 SELECT ID,USER_ID,GOOD_TYPE,(SELECT REAL_NAME FROM  M_USER_INFO WHERE ID =T.USER_ID ) as USER_NAME ,(SELECT ACCOUNT_NO FROM  M_USER_INFO WHERE ID =T.USER_ID ) as ACCOUNT_NO ,
+		 APPLY_TIME,EXCHANGE_NUM,RECEPIT_PHONE,RECEPIT_USER_NAME,PROVINCE,CITY,AREA,FULL_ADDRESS,SEND_TIME,
+		 STATE,SEND_USER,EXPRESS_COMPANY,EXPRESS_ORDER,VERSION from M_EXCHANGE_INFO  T 
+         <include refid="Model_Where_Clause"/>  
+           ORDER BY T.APPLY_TIME DESC
+     </select>
+</mapper>

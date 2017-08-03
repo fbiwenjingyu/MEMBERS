@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MUserAccountInoutHlgMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<update id="updateHlgFlag">
+	UPDATE M_USER_ACCOUNT_INOUT_HLG SET EXEC_FLAG = 3 WHERE EXEC_FLAG = 1 AND DATE(CREATE_TIME) = #{collectDate,jdbcType=DATE}
+	</update>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+				AND ACCOUNT_TYPE = #{accountType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutType )">
+				AND INOUT_TYPE = #{inoutType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutTypes )">
+				AND INOUT_TYPE IN (${inoutTypes}) 
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( amount )">
+				AND AMOUNT = #{amount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( tradeNo )">
+				AND TRADE_NO = #{tradeNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( inoutDesc )">
+				AND INOUT_DESC = #{inoutDesc}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( operatorNo )">
+				AND OPERATOR_NO = #{operatorNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userType )">
+				AND USER_TYPE = #{userType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( execFlag )">
+				AND EXEC_FLAG = #{execFlag}
+			</if>
+		</where>
+	 </sql>
+</mapper>

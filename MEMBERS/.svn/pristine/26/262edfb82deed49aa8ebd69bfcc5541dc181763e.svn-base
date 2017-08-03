@@ -1,0 +1,24 @@
+
+/**
+* CSS themes for simplePagination.js
+* Author: Flavius Matis - http://flaviusmatis.github.com/
+* URL: https://github.com/flaviusmatis/simplePagination.js*/
+ul.simple-pagination{list-style: none;}
+.simple-pagination{display: block;overflow: hidden;padding: 0 5px 5px 0;margin: 0;}
+.simple-pagination ul{list-style: none;padding: 0;margin: 0 auto;display:inline-block;*display:inline;*float: right;}
+.simple-pagination li{list-style: none;display:inline-block;*display:inline;padding: 0;margin: 0;}
+.page{display:inline-block;*display:inline;text-align: center;font-size: 14px;margin:0 auto;position: relative;}
+.page a{display: inline-block;display:inline-block;padding:0 10px;height: 30px;line-height: 30px;border-radius:50%;text-align: center;color: #333;border-radius:20px;}
+.page a.on{color: #fff;background: #02CDC1;}
+.page_box{text-align:center;padding:0 20px;}
+.page_box table{margin: 20px auto;}
+.page_box td{vertical-align: middle;}
+#page-desc{font-size:15px;color:#666;position: relative;float: right;margin-top: 6px;}
+.compact-theme a, .compact-theme span{float: left;font-size:14px;display:inline-block;padding:0 10px;height: 28px;line-height: 28px;text-align: center;border-radius:20px;margin:0 5px 0 0;color: #333;}
+.compact-theme a:hover{color: #fff;background: #02CDC1;}
+.compact-theme .prev{float: left;font-size:14px;display:inline-block;padding:0 10px;height: 30px;line-height: 30px;border-radius:20px;text-align: center;color: #333;margin-right:5px;}
+.compact-theme .next{float: left;font-size:14px;display:inline-block;padding:0 10px;height: 30px;line-height: 30px;border-radius:20px;text-align: center;color: #333;margin-left:5px;}
+.compact-theme .current{color: #fff;background: #02CDC1;}
+.compact-theme span.current.prev,.compact-theme span.current.next{background:none;color:#333;}
+.compact-theme .ellipse{padding:0;cursor: default;}
+.page_box em{font-style:normal;}

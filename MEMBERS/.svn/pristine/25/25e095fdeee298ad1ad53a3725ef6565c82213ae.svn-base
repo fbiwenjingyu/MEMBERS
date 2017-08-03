@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.message.mapper.MNoticeContentMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( noticeId )">
+				AND NOTICE_ID = #{noticeId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( content )">
+				AND CONTENT = #{content}
+			</if>
+		</where>
+	 </sql>
+</mapper>

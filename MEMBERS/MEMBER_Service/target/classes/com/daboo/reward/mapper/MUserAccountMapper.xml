@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MUserAccountMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<update id="updateModelByUserIds" parameterType="com.daboo.reward.model.MUserAccountModel">
+		UPDATE M_USER_ACCOUNT  SET  ACCOUNT_AMOUNT = ACCOUNT_AMOUNT + #{accountAmount,jdbcType=BIGINT} , VERSION = VERSION+1 ,
+		UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    	WHERE USER_ID IN (${userIds}) AND ACCOUNT_TYPE = #{accountType,jdbcType=INTEGER} 
+	</update>
+	
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountType )">
+				AND ACCOUNT_TYPE = #{accountType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountAmount )">
+				AND ACCOUNT_AMOUNT = #{accountAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountStatus )">
+				AND ACCOUNT_STATUS = #{accountStatus}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+		</where>
+	 </sql>
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.message.mapper.MReplyMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<!-- 根据反馈外键查询所有的回复 fengchao -->
+    <select id="getListByOpinionId" parameterType="Integer" resultType="com.daboo.message.model.MReplyModel">
+        select r.ID,r.RESPONSE_ID responseId,r.REPLY_COMTENT replyComtent,r.REPLY_ID replyId,r.IS_SYSTEM isSystem,r.REPLY_TIME replyTime FROM M_REPLY r WHERE r.RESPONSE_ID = #{id} and r.IS_DELETED = 0
+    </select>
+    <!-- 根据反馈id删除回复 fengchao -->
+   <delete id="deleteByResponseId" parameterType="String">
+        UPDATE M_REPLY r SET r.IS_DELETED = 1 WHERE r.RESPONSE_ID in (#{responseIds}) 
+   </delete>
+   <!-- 获取此评论的回复总数 -->
+   <select id="getReplyCount" parameterType="Integer" resultType="Integer">
+        select count(1) FROM M_REPLY r WHERE r.RESPONSE_ID = #{responseId} and r.IS_DELETED = 0
+   </select>
+   <!-- 批量获取反馈的总回复数（未读且系统管理员回复） -->
+   <select id="haveNoReadMes" parameterType="String" resultType="HashMap">
+        select count(1) 'count',r.RESPONSE_ID 'responseId' FROM M_REPLY r WHERE r.RESPONSE_ID in (${ids}) and r.IS_DELETED = 0 and IS_READ = 0 and IS_SYSTEM = 1  GROUP BY r.RESPONSE_ID
+   </select>
+    <!-- 将回复设置为已读 -->
+   <select id="updateReadByResponseId" parameterType="Integer" >
+        update M_REPLY r set IS_READ = 1,UPDATE_TIME = now() where  r.RESPONSE_ID = #{responseId} and r.IS_DELETED = 0 and IS_READ = 0 
+   </select>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( responseId )">
+				AND RESPONSE_ID = #{responseId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( replyComtent )">
+				AND REPLY_COMTENT = #{replyComtent}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( replyId )">
+				AND REPLY_ID = #{replyId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( replyTime )">
+				AND REPLY_TIME = #{replyTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isDeleted )">
+				AND IS_DELETED = #{isDeleted}
+			</if>
+		</where>
+	 </sql>
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.user.mapper.MUserlevelManageMapper">
+
+
+
+	<!-- 请在此添加自定义方法（开始） -->
+
+	<select id="findByConditions" parameterType="java.util.Map"
+		resultMap="result_ResultMap_MUserlevelManageModel">
+		select ID, USER_ID, OLD_LEVEL, NEW_LEVEL, STATUS, CREATE_TIME, CREATE_BY, AUTH_TIME, UPDATE_TIME, IS_DELETED, UPDATE_BY
+		from
+		M_USERLEVEL_MANAGE
+		<where>
+			<if test="userId != null">
+				AND USER_ID like concat('%',#{userId},'%')
+			</if>
+			<if test="status != null">
+				AND STATUS = #{status}
+			</if>
+			<if test="startDate != null">
+				AND CREATE_TIME &gt;= #{startDate}
+			</if>
+			<if test="endDate != null">
+				AND CREATE_TIME &lt; #{endDate}
+			</if>
+			AND IS_DELETED = 0 
+		</where>
+		order by CREATE_TIME desc
+	</select>
+
+	<select id="findByConditionsCount" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select count(1)
+		from M_USERLEVEL_MANAGE
+		<where>
+			<if test="userId != null">
+				AND USER_ID like concat('%',#{userId},'%')
+			</if>
+			<if test="status != null">
+				AND STATUS = #{status}
+			</if>
+			<if test="startDate != null">
+				AND CREATE_TIME &gt;= #{startDate}
+			</if>
+			<if test="endDate != null">
+				AND CREATE_TIME &lt; #{endDate}
+			</if>
+			AND IS_DELETED = 0
+		</where>
+	</select>
+
+	<update id="deleteLecelChangeById">
+		UPDATE M_USERLEVEL_MANAGE SET IS_DELETED = 1
+		WHERE ID = #{id}
+	</update>
+
+
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( oldLevel )">
+				AND OLD_LEVEL = #{oldLevel}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( newLevel )">
+				AND NEW_LEVEL = #{newLevel}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( status )">
+				AND STATUS = #{status}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( authTime )">
+				AND AUTH_TIME = #{authTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isDeleted )">
+				AND IS_DELETED = #{isDeleted}
+			</if>
+		</where>
+	</sql>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MDayReportMapper">	
+	<!-- 请在此添加自定义方法（开始） -->
+	
+	<select id="selectInOutByConditions" parameterType="java.util.Map" resultMap="result_ResultMap_MDayReportModel">
+		SELECT ID, COLLECT_DATE, REWARD_AMOUNT, BEANS_NUM, POINT_AMOUNT, MANAGE_AMOUNT, COACH_AMOUNT, VIP_NUM, RECHARGE_AMOUNT,RECHARGE_BEANS,RECHARGE_POINT, DRAW_REQ, DRAW_AMOUNT, EXCHANGE_NUM,
+		 SEND_NUM, HLG_NUM, HLG_AMOUNT, HLG_BEANS, ACT_USER_AMOUNT, ACT_USER_POINT, ACT_USER_BEANS, VERSION FROM M_DAY_REPORT
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				COLLECT_DATE &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND COLLECT_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+		ORDER BY COLLECT_DATE DESC
+	</select>
+	
+	<select id="countInOutByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM M_DAY_REPORT 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				COLLECT_DATE &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND COLLECT_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND COLLECT_DATE = #{collectDate}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rewardAmount )">
+				AND REWARD_AMOUNT = #{rewardAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( beansNum )">
+				AND BEANS_NUM = #{beansNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( pointAmount )">
+				AND POINT_AMOUNT = #{pointAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( manageAmount )">
+				AND MANAGE_AMOUNT = #{manageAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( coachAmount )">
+				AND COACH_AMOUNT = #{coachAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( vipNum )">
+				AND VIP_NUM = #{vipNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rechargeAmount )">
+				AND RECHARGE_AMOUNT = #{rechargeAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rechargeBeans )">
+				AND RECHARGE_BEANS = #{rechargeBeans}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( rechargePoint )">
+				AND RECHARGE_POINT = #{rechargePoint}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( drawReq )">
+				AND DRAW_REQ = #{drawReq}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( drawAmount )">
+				AND DRAW_AMOUNT = #{drawAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( exchangeNum )">
+				AND EXCHANGE_NUM = #{exchangeNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( sendNum )">
+				AND SEND_NUM = #{sendNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( hlgNum )">
+				AND HLG_NUM = #{hlgNum}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( hlgAmount )">
+				AND HLG_AMOUNT = #{hlgAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( hlgBeans )">
+				AND HLG_BEANS = #{hlgBeans}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( actUserAmount )">
+				AND ACT_USER_AMOUNT = #{actUserAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( actUserPoint )">
+				AND ACT_USER_POINT = #{actUserPoint}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( actUserBeans )">
+				AND ACT_USER_BEANS = #{actUserBeans}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+		</where>
+	 </sql>
+</mapper>

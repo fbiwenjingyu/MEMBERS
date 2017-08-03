@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.message.mapper.MNoticeMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<select id="findById" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select a.ID,a.TITLE,a.DEPLOY_BY,a.TOP_TIME,a.DEPLOY_TIME,b.CONTENT
+		from M_NOTICE a
+		left join M_NOTICE_CONTENT b on a.ID=b.NOTICE_ID
+		where a.ID=#{noticeId}
+	</select>
+	
+	<select id="findByCons" parameterType="java.util.Map" resultType="java.util.Map">
+		select a.ID,a.TITLE,a.DEPLOY_BY,a.TOP_TIME,a.DEPLOY_TIME,b.CONTENT
+		from M_NOTICE a
+		left join M_NOTICE_CONTENT b on a.ID=b.NOTICE_ID
+		<where>
+			a.IS_DELETE=0
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.DEPLOY_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.DEPLOY_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+		order by a.TOP_TIME desc
+	</select>
+	
+	<select id="findByConsCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1)
+		from M_NOTICE a
+		left join M_NOTICE_CONTENT b on a.ID=b.NOTICE_ID
+		<where>
+			a.IS_DELETE=0
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.DEPLOY_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.DEPLOY_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			
+		</where>
+	</select>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( title )">
+				AND TITLE = #{title}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( deployBy )">
+				AND DEPLOY_BY = #{deployBy}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( deployTime )">
+				AND DEPLOY_TIME = #{deployTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( topTime )">
+				AND TOP_TIME = #{topTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isDelete )">
+				AND IS_DELETE = #{isDelete}
+			</if>
+		</where>
+	 </sql>
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.user.mapper.MUserRegMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<!--根据账号删除用户 -->
+	<delete id="deleteUserRegByAccountNo">
+		DELETE FROM M_USER_REG WHERE ACCOUNT_NO = #{accountNo}
+	</delete>
+
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND ACCOUNT_NO = #{accountNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( phone )">
+				AND PHONE = #{phone}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( password )">
+				AND PASSWORD = #{password}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( payPassword )">
+				AND PAY_PASSWORD = #{payPassword}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+				AND REAL_NAME = #{realName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( level )">
+				AND LEVEL = #{level}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( agentId )">
+				AND AGENT_ID = #{agentId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( recommendId )">
+				AND RECOMMEND_ID = #{recommendId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( registerMoney )">
+				AND REGISTER_MONEY = #{registerMoney}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( province )">
+				AND PROVINCE = #{province}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( city )">
+				AND CITY = #{city}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( area )">
+				AND AREA = #{area}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( fullAddress )">
+				AND FULL_ADDRESS = #{fullAddress}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( bankName )">
+				AND BANK_NAME = #{bankName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( subbranchBank )">
+				AND SUBBRANCH_BANK = #{subbranchBank}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardName )">
+				AND CARD_NAME = #{cardName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardNo )">
+				AND CARD_NO = #{cardNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+		</where>
+	 </sql>
+</mapper>

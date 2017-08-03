@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.business.mapper.MBusinessCenterMapper">
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<select id="findByConditions" parameterType="java.util.Map" resultMap="result_ResultMap_MBusinessCenterModel">
+		 SELECT ID,BUSINESS_NO,ACCOUNT_NO,PHONE,REAL_NAME,OPEN_STATE,ACTIVE_STATE,CREATE_TIME,UPDATE_TIME ,OPERATER,REMARK,VERSION FROM M_BUSINESS_CENTER
+		<include refid="my_sql"></include>
+		ORDER BY CREATE_TIME DESC
+	</select>
+	
+	<select id="countByConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM M_BUSINESS_CENTER
+		<include refid="my_sql"></include>
+	</select>
+	
+	<update id="openToBC" parameterType="com.daboo.business.model.MBusinessCenterModel" >
+		UPDATE M_BUSINESS_CENTER SET OPEN_STATE=1 , ACTIVE_STATE=1 ,UPDATE_TIME=NOW(), OPERATER=#{operater},REMARK=#{remark} ,VERSION=VERSION+1
+		WHERE ID=#{id} AND VERSION=#{version} AND OPEN_STATE=0 AND ACTIVE_STATE=0 
+	</update>
+	
+	<update id="notOpenToBC" parameterType="com.daboo.business.model.MBusinessCenterModel" >
+		UPDATE M_BUSINESS_CENTER SET OPEN_STATE=2 ,UPDATE_TIME=NOW(), OPERATER=#{operater},REMARK=#{remark} ,VERSION=VERSION+1
+		WHERE ID=#{id} AND VERSION=#{version} AND OPEN_STATE=0 AND ACTIVE_STATE=0 
+	</update>
+	
+	<update id="activeBC" parameterType="com.daboo.business.model.MBusinessCenterModel" >
+		UPDATE M_BUSINESS_CENTER SET ACTIVE_STATE=1 ,UPDATE_TIME=NOW(), OPERATER=#{operater},VERSION=VERSION+1
+		WHERE ID=#{id} AND VERSION=#{version} AND OPEN_STATE=1 AND ACTIVE_STATE=2 
+	</update>
+	
+	<update id="freezeBC" parameterType="com.daboo.business.model.MBusinessCenterModel" >
+		UPDATE M_BUSINESS_CENTER SET ACTIVE_STATE=2 ,UPDATE_TIME=NOW(), OPERATER=#{operater},VERSION=VERSION+1
+		WHERE ID=#{id} AND VERSION=#{version} AND OPEN_STATE=1 AND ACTIVE_STATE=1 
+	</update>
+	
+	<update id="activeBCByAccountNo" >
+		UPDATE M_BUSINESS_CENTER SET ACTIVE_STATE=1 ,UPDATE_TIME=NOW(),VERSION=VERSION+1
+		WHERE ACCOUNT_NO=#{accountNo}  AND OPEN_STATE=1 AND ACTIVE_STATE=2 
+	</update>
+	
+	<update id="freezeBCByAccountNo"  >
+		UPDATE M_BUSINESS_CENTER SET ACTIVE_STATE=2 ,UPDATE_TIME=NOW(),VERSION=VERSION+1
+		WHERE ACCOUNT_NO=#{accountNo}   AND OPEN_STATE=1 AND ACTIVE_STATE=1 
+	</update>
+	
+	<update id="updateUserToBC">
+		UPDATE M_USER_INFO SET TYPE=3,ACTIVATE_TIME=NOW(),UPDATE_TIME=NOW() 
+		WHERE ACCOUNT_NO=#{accountNo} AND TYPE=1 AND IS_DELETED=0
+	</update>
+	
+	<update id="updateFreezedToActive">
+		UPDATE M_USER_INFO SET TYPE=3,ACTIVATE_TIME=NOW(),UPDATE_TIME=NOW() 
+		WHERE ACCOUNT_NO=#{accountNo} AND TYPE=2 AND IS_DELETED=0
+	</update>
+	
+	<update id="updateBCToFreezed">
+		UPDATE M_USER_INFO SET TYPE=2,ACTIVATE_TIME=NOW(),UPDATE_TIME=NOW() 
+		WHERE ACCOUNT_NO=#{accountNo} AND TYPE=3 AND IS_DELETED=0
+	</update>
+	
+	<!-- 扩展的字段-->
+    <resultMap type="com.daboo.business.model.MBusinessUserModel" id="myUserMap" >
+    	<id column="ID" property="id" jdbcType="INTEGER"/>
+        <result column="ACCOUNT_NO" property="accountNo" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="REAL_NAME" property="realName" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="TINYINT" />
+        <result column="LEVEL" property="level" jdbcType="TINYINT" />
+        <result column="AGENT_ID" property="agentId" jdbcType="INTEGER" />
+        <result column="AGENT_NO" property="agentNo" jdbcType="VARCHAR" />
+        <result column="RECOMMEND_ID" property="recommendId" jdbcType="INTEGER" />
+        <result column="RECOMMEND_NO" property="recommendNo" jdbcType="VARCHAR" />
+        <result column="ACTIVATE_TIME" property="activateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+	<!-- dy 查询商务中心下的会员列表  -->
+	<select id="findUserListForBC" parameterType="java.lang.String" resultMap="myUserMap">		
+		SELECT B.ID, B.ACCOUNT_NO, B.PHONE , B.REAL_NAME, B.TYPE, B.LEVEL, B.AGENT_ID,
+			C.ACCOUNT_NO AS AGENT_NO , B.RECOMMEND_ID,D.ACCOUNT_NO AS RECOMMEND_NO ,B.ACTIVATE_TIME
+		FROM M_USER_INFO B LEFT JOIN M_USER_INFO C ON B.AGENT_ID=C.ID LEFT JOIN M_USER_INFO D ON B.RECOMMEND_ID=D.ID
+			WHERE B.RECOMMEND_ID=
+				(SELECT	ID FROM	M_USER_INFO WHERE ACCOUNT_NO =#{accountNo}) 
+			AND B.TYPE IN (1, 3) AND B.IS_DELETED = 0
+	</select>
+	
+	<delete id="deleteByAccountNo">
+		DELETE FROM M_BUSINESS_CENTER WHERE ACCOUNT_NO=#{accountNo}
+	</delete>
+	
+	<sql id="my_sql">
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( openState )">
+				AND OPEN_STATE = #{openState}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			<!-- <if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+				AND REAL_NAME like '%${realName}%'
+			</if> -->
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND ACCOUNT_NO like '%${accountNo}%'
+			</if>
+		</where>
+	</sql>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( businessNo )">
+				AND BUSINESS_NO = #{businessNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( accountNo )">
+				AND ACCOUNT_NO = #{accountNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( phone )">
+				AND PHONE = #{phone}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( realName )">
+				AND REAL_NAME = #{realName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( openState )">
+				AND OPEN_STATE = #{openState}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( activeState )">
+				AND ACTIVE_STATE = #{activeState}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( remark )">
+				AND REMARK = #{remark}
+			</if>
+		</where>
+	 </sql>
+</mapper>

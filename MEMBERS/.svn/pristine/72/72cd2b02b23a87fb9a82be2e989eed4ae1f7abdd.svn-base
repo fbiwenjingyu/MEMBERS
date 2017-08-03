@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.finance.mapper.MTransferDetailMapper">
+
+
+
+	<!-- 请在此添加自定义方法（开始） -->
+
+	<!--分页获取转账记录 -->
+	<select id="findTransferListByConditions" parameterType="java.util.Map"
+		resultType="com.daboo.finance.model.MTransferDetailDto">
+		select TYPE type,(CASE TRANSFER_ID WHEN #{userId} THEN RECEIVE_NAME ELSE TRANSFER_NAME END) transferName,
+		(CASE TRANSFER_ID WHEN #{userId} THEN RECEIVE_PHONE ELSE TRANSFER_PHONE END) transferPhone,
+		TRANSFER_AMOUNT transferAmount,CREATE_TIME createTime,(CASE TRANSFER_ID WHEN #{userId} THEN 1 ELSE 2 END) transferType from M_TRANSFER_DETAIL
+		<where>
+		    <if test="type == 0">
+				AND (TRANSFER_ID = #{userId} OR RECEIVE_ID = #{userId})
+			</if>
+		    <if test="type == 1">
+				AND TRANSFER_ID = #{userId}
+			</if>
+			<if test="type == 2">
+				AND RECEIVE_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty(startDate)">
+				AND CREATE_TIME &gt;=
+				STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty(endDate)">
+				AND CREATE_TIME &lt;=
+				STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+		order by CREATE_TIME desc
+	</select>
+
+	<select id="findTransferListCountByConditions" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select COUNT(1) from M_TRANSFER_DETAIL
+		<where>
+		    <if test="type == 0">
+				AND (TRANSFER_ID = #{userId} OR RECEIVE_ID = #{userId})
+			</if>
+		    <if test="type == 1">
+				AND TRANSFER_ID = #{userId}
+			</if>
+			<if test="type == 2">
+				AND RECEIVE_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty(startDate)">
+				AND CREATE_TIME &gt;=
+				STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty(endDate)">
+				AND CREATE_TIME &lt;=
+				STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( serialNo )">
+				AND SERIAL_NO = #{serialNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( transferId )">
+				AND TRANSFER_ID = #{transferId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( transferName )">
+				AND TRANSFER_NAME = #{transferName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( transferPhone )">
+				AND TRANSFER_PHONE = #{transferPhone}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( transferAmount )">
+				AND TRANSFER_AMOUNT = #{transferAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( transferType )">
+				AND TRANSFER_TYPE = #{transferType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( transferState )">
+				AND TRANSFER_STATE = #{transferState}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( receiveId )">
+				AND RECEIVE_ID = #{receiveId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( receivePhone )">
+				AND RECEIVE_PHONE = #{receivePhone}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( receiveName )">
+				AND RECEIVE_NAME = #{receiveName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( bankName )">
+				AND BANK_NAME = #{bankName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( openCity )">
+				AND OPEN_CITY = #{openCity}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardName )">
+				AND CARD_NAME = #{cardName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardNo )">
+				AND CARD_NO = #{cardNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( arrivalTime )">
+				AND ARRIVAL_TIME = #{arrivalTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( isDeleted )">
+				AND IS_DELETED = #{isDeleted}
+			</if>
+		</where>
+	</sql>
+</mapper>

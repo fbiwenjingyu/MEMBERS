@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.reward.mapper.MTaskMonitorMapper">
+
+
+	<!--分页查询 用户信息-->
+	<select id="findTaskPaging" parameterType="java.util.Map" resultMap="result_ResultMap_MTaskMonitorModel">
+		 SELECT ID, COLLECT_DATE, TASK_NAME, TASK_TYPE, RUN_DATE, RUN_STATE FROM M_TASK_MONITOR
+		 <where>
+		 	<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( taskType )">
+				AND TASK_TYPE = #{taskType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( runState )">
+				AND RUN_STATE = #{runState}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND COLLECT_DATE &gt;= #{startDate}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+			 	AND COLLECT_DATE &lt;= #{endDate}
+			</if>
+		 </where> 
+	</select>
+	
+	<select id="findTaskCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		 SELECT COUNT(1) FROM M_TASK_MONITOR
+		 <where>
+		 	<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( taskType )">
+				AND TASK_TYPE = #{taskType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( runState )">
+				AND RUN_STATE = #{runState}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND COLLECT_DATE &gt;= #{startDate}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+			 	AND COLLECT_DATE &lt;= #{endDate}
+			</if>
+		 </where> 
+	</select>
+
+ 
+	
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( runDate )">
+				AND RUN_DATE = #{runDate,jdbcType=DATE}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( collectDate )">
+				AND COLLECT_DATE = #{collectDate,jdbcType=DATE}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( taskName )">
+				AND TASK_NAME = #{taskName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( taskType )">
+				AND TASK_TYPE = #{taskType}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( runState )">
+				AND RUN_STATE = #{runState}
+			</if>
+			<!-- <if test="@org.apache.ibatis.util.Ognl@isNotEmpty( runResult )">
+				AND RUN_RESULT = #{runResult}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( remark )">
+				AND REMARK = #{remark}
+			</if> -->
+		</where>
+	 </sql>
+</mapper>

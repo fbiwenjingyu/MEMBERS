@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daboo.finance.mapper.MDrawMapper">
+
+ 
+	
+	<!-- 请在此添加自定义方法（开始） -->
+	<select id="findByCons" parameterType="java.util.Map" resultType="java.util.Map">
+		select a.ID,a.SERIAL_NO,a.MEMBER_NO,a.CREATE_TIME,a.AMOUNT,a.CARD_OWNER_NAME,a.CARD_NO,
+			a.BANK_NAME,a.STATUS,a.MEMO,a.OPEN_BANK_CITY,a.FEE,a.ARRIVAL_AMOUNT,a.JF,
+			a.OPERATOR,b.REAL_NAME
+		from M_DRAW a LEFT JOIN  M_USER_INFO b ON a.USER_ID = b.ID 
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( memberNo )">
+				AND a.MEMBER_NO like '%${memberNo}%'
+			</if>
+			<if test="drawStatus != null">
+				AND a.STATUS = #{drawStatus}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+		order by a.CREATE_TIME desc
+	</select>
+	
+	<select id="findByConsCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1)
+		from M_DRAW a
+		<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( memberNo )">
+				AND a.MEMBER_NO like '%${memberNo}%'
+			</if>
+			<if test="drawStatus != null">
+				AND a.STATUS = #{drawStatus}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( startDate )">
+				AND a.CREATE_TIME &gt;= STR_TO_DATE(#{startDate},'%Y-%m-%d')
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( endDate )">
+				AND a.CREATE_TIME &lt;= STR_TO_DATE(CONCAT(#{endDate},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+	</select>
+	<!-- 请在此添加自定义方法（结束） -->
+	<sql id="Model_Where_Clause">
+	<where>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( id )">
+				AND ID = #{id}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( version )">
+				AND VERSION = #{version}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( serialNo )">
+				AND SERIAL_NO = #{serialNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( userId )">
+				AND USER_ID = #{userId}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardOwnerName )">
+				AND CARD_OWNER_NAME = #{cardOwnerName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( bankName )">
+				AND BANK_NAME = #{bankName}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( openBankCity )">
+				AND OPEN_BANK_CITY = #{openBankCity}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( cardNo )">
+				AND CARD_NO = #{cardNo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( amount )">
+				AND AMOUNT = #{amount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( fee )">
+				AND FEE = #{fee}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( arrivalAmount )">
+				AND ARRIVAL_AMOUNT = #{arrivalAmount}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( jf )">
+				AND JF = #{jf}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( status )">
+				AND STATUS = #{status}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( memo )">
+				AND MEMO = #{memo}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( createTime )">
+				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( updateTime )">
+				AND UPDATE_TIME = #{updateTime}
+			</if>
+			<if test="@org.apache.ibatis.util.Ognl@isNotEmpty( operator )">
+				AND OPERATOR = #{operator}
+			</if>
+		</where>
+	 </sql>
+</mapper>
